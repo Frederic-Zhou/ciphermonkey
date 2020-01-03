@@ -29,6 +29,41 @@ class DB {
     });
   }
 
+  //查询键列表
+  static Future<List<CMKey>> queryKeys(
+      String id, String name, String addtime, String type) async {
+    List<String> whereList = [];
+    List<String> whereArgList = [];
+    if (id != "") {
+      whereList.add("id=?");
+      whereArgList.add(id);
+    }
+    if (name != "") {
+      whereList.add("name=?");
+      whereArgList.add(name);
+    }
+    if (addtime != "") {
+      whereList.add("addtime=?");
+      whereArgList.add(addtime);
+    }
+    if (type != "") {
+      whereList.add("type=?");
+      whereArgList.add(type);
+    }
+
+    final List<Map<String, dynamic>> maps = await instance.query('keys',
+        where: whereList.join(" OR "), whereArgs: whereArgList);
+    return List.generate(maps.length, (i) {
+      return CMKey(
+        id: maps[i]['id'],
+        name: maps[i]['name'],
+        value: maps[i]['value'],
+        addtime: maps[i]['addtime'],
+        type: maps[i]['type'],
+      );
+    });
+  }
+
   //添加键
   static Future<void> addKey(CMKey key) async {
     await instance.insert(

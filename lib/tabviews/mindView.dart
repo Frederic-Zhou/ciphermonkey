@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ciphermonkey/model.dart';
 
 class MindView extends StatefulWidget {
   MindView({Key key, this.title}) : super(key: key);
@@ -11,58 +12,77 @@ class MindView extends StatefulWidget {
 
 class _MindViewState extends State<MindView> {
   final _formKey = GlobalKey<FormState>();
-
+  bool hasKey = false;
   @override
-  void initState() {
+  void initState() async {
     super.initState();
+    List<CMKey> keys = await DB.queryKeys("", "", "", "private");
 
-    //setState(() {});
+    hasKey = keys.length > 0;
   }
 
   @override
   Widget build(BuildContext context) {
     return Form(
-      key: _formKey,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          TextFormField(
-            decoration: const InputDecoration(
-              hintText: 'Your nickname',
-            ),
-            validator: (value) {
-              if (value.isEmpty) {
-                return 'Please enter your nickname.';
-              }
-              return null;
-            },
+        key: _formKey,
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Offstage(
+                  offstage: hasKey,
+                  child: TextFormField(
+                    decoration: const InputDecoration(
+                      hintText: 'Your nickname',
+                    ),
+                    validator: (value) {
+                      if (value.isEmpty) {
+                        return 'Please enter your nickname.';
+                      }
+                      return null;
+                    },
+                  )),
+              Offstage(
+                  offstage: hasKey,
+                  child: TextFormField(
+                    decoration: const InputDecoration(
+                      hintText: 'Your password',
+                    ),
+                    validator: (value) {
+                      if (value.isEmpty) {
+                        return 'Please enter password to encrypt privatekey';
+                      }
+                      return null;
+                    },
+                  )),
+              Offstage(
+                  offstage: hasKey,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 16.0),
+                    child: RaisedButton(
+                      onPressed: () {
+                        // Validate will return true if the form is valid, or false if
+                        // the form is invalid.
+                        if (_formKey.currentState.validate()) {
+                          // Process data.
+                        }
+                      },
+                      child: Text('Create Public Key & Private Key'),
+                    ),
+                  )),
+              Offstage(offstage: !hasKey, child: Text('Public Key:')),
+              Offstage(
+                  offstage: !hasKey,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 16.0),
+                    child: RaisedButton(
+                      onPressed: () {},
+                      child: Text('Send Publick Key to your contacts'),
+                    ),
+                  )),
+            ],
           ),
-          TextFormField(
-            decoration: const InputDecoration(
-              hintText: 'Your password',
-            ),
-            validator: (value) {
-              if (value.isEmpty) {
-                return 'Please enter password to encrypt privatekey';
-              }
-              return null;
-            },
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 16.0),
-            child: RaisedButton(
-              onPressed: () {
-                // Validate will return true if the form is valid, or false if
-                // the form is invalid.
-                if (_formKey.currentState.validate()) {
-                  // Process data.
-                }
-              },
-              child: Text('Create Public Key & Private Key'),
-            ),
-          ),
-        ],
-      ),
-    );
+        ));
   }
 }

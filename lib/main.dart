@@ -14,11 +14,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: '密联本',
+      title: 'Contact',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: MyHomePage(title: '密联本'),
+      home: MyHomePage(title: 'Contact'),
       debugShowCheckedModeBanner: false,
     );
   }
