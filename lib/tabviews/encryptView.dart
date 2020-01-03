@@ -11,6 +11,13 @@ class EncryptView extends StatefulWidget {
 
 class _EncryptViewState extends State<EncryptView> {
   @override
+  void initState() {
+    super.initState();
+
+    setState(() {});
+  }
+
+  @override
   Widget build(BuildContext context) {
     return ListView.builder(
       // Let the ListView know how many items it needs to build.

@@ -11,6 +11,13 @@ class ContactView extends StatefulWidget {
 
 class _ContactViewState extends State<ContactView> {
   @override
+  void initState() {
+    super.initState();
+
+    setState(() {});
+  }
+
+  @override
   Widget build(BuildContext context) {
     return ListView.builder(
       // Let the ListView know how many items it needs to build.

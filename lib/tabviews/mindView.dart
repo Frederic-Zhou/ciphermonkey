@@ -10,23 +10,59 @@ class MindView extends StatefulWidget {
 }
 
 class _MindViewState extends State<MindView> {
+  final _formKey = GlobalKey<FormState>();
+
+  @override
+  void initState() {
+    super.initState();
+
+    //setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      // Let the ListView know how many items it needs to build.
-      itemCount: 10,
-      // Provide a builder function. This is where the magic happens.
-      // Convert each item into a widget based on the type of item it is.
-      itemBuilder: (context, index) {
-        final item = index.toString() + "item";
-
-        return ListTile(
-          title: Text(
-            item,
-            style: Theme.of(context).textTheme.headline,
+    return Form(
+      key: _formKey,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          TextFormField(
+            decoration: const InputDecoration(
+              hintText: 'Your nickname',
+            ),
+            validator: (value) {
+              if (value.isEmpty) {
+                return 'Please enter your nickname.';
+              }
+              return null;
+            },
           ),
-        );
-      },
+          TextFormField(
+            decoration: const InputDecoration(
+              hintText: 'Your password',
+            ),
+            validator: (value) {
+              if (value.isEmpty) {
+                return 'Please enter password to encrypt privatekey';
+              }
+              return null;
+            },
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 16.0),
+            child: RaisedButton(
+              onPressed: () {
+                // Validate will return true if the form is valid, or false if
+                // the form is invalid.
+                if (_formKey.currentState.validate()) {
+                  // Process data.
+                }
+              },
+              child: Text('Create Public Key & Private Key'),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
