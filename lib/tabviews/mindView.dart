@@ -14,11 +14,15 @@ class _MindViewState extends State<MindView> {
   final _formKey = GlobalKey<FormState>();
   bool hasKey = false;
   @override
-  void initState() async {
+  void initState() {
     super.initState();
-    List<CMKey> keys = await DB.queryKeys("", "", "", "private");
+    Future<List<CMKey>> keysFuture = DB.queryKeys("", "", "", "private");
 
-    hasKey = keys.length > 0;
+    keysFuture.then((keys) {
+      setState(() {
+        hasKey = keys.length > 0;
+      });
+    });
   }
 
   @override
