@@ -3,6 +3,8 @@ import 'tabviews/contactView.dart';
 import 'tabviews/decryptView.dart';
 import 'tabviews/encryptView.dart';
 import 'tabviews/mindView.dart';
+import 'model.dart';
+import 'dart:io';
 
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key key, this.title}) : super(key: key);

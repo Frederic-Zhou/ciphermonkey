@@ -3,61 +3,87 @@ import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
 class DB {
-  static Future<Database> instance;
+  static Database instance;
 
-  static void openDB() async {
-    // Open the database and store the reference.
-    instance = openDatabase(
-      join(await getDatabasesPath(), 'ciphermonkey.db'),
-      onCreate: (db, version) {
-        print("create db\n");
-        return db.execute(
-          "CREATE TABLE keys(id TEXT PRIMARY KEY, name TEXT, key TEXT, type TEXT)",
-        );
-      },
-      version: 1,
+  static Future openDB() async {
+    instance = await openDatabase(
+        join(await getDatabasesPath(), 'ciphermonkey.db'),
+        version: 1, onCreate: (Database db, int version) async {
+      await db.execute(
+        "CREATE TABLE keys(id TEXT PRIMARY KEY, name TEXT, value TEXT, addtime TEXT, type TEXT)",
+      );
+    });
+  }
+
+  //获取键列表
+  static Future<List<CMKey>> getKeys() async {
+    final List<Map<String, dynamic>> maps = await instance.query('keys');
+    return List.generate(maps.length, (i) {
+      return CMKey(
+        id: maps[i]['id'],
+        name: maps[i]['name'],
+        value: maps[i]['value'],
+        addtime: maps[i]['addtime'],
+        type: maps[i]['type'],
+      );
+    });
+  }
+
+  //添加键
+  static Future<void> addKey(CMKey key) async {
+    await instance.insert(
+      'keys',
+      key.toMap(),
+      conflictAlgorithm: ConflictAlgorithm.replace,
     );
   }
+
+  //修改键
+  static Future<void> modKey(CMKey key) async {
+    await instance.update(
+      'keys',
+      key.toMap(),
+      where: "id = ?",
+      whereArgs: [key.id],
+    );
+  }
+
+  //删除键
+  static Future<void> delKey(String id) async {
+    await instance.delete(
+      'keys',
+      where: "id = ?",
+      whereArgs: [id],
+    );
+  }
+
+  //关闭数据库
+  static closeDB() async {
+    await instance.close();
+  }
 }
 
-class PublicKey {
+class CMKey {
   final String id;
   final String name;
-  final String key;
+  final String value;
+  final String addtime;
+  final String type;
 
-  PublicKey({this.id, this.name, this.key});
+  CMKey({this.id, this.name, this.value, this.addtime, this.type});
 
   Map<String, dynamic> toMap() {
     return {
       'id': id,
       'name': name,
-      'key': key,
+      'value': value,
+      'addtime': addtime,
+      'type': type
     };
   }
 
   @override
   String toString() {
-    return 'publickey{id: $id, name: $name, key: $key}';
-  }
-}
-
-class PrivateKey {
-  final String id;
-  final String name;
-  final String key;
-
-  PrivateKey({this.id, this.name, this.key});
-
-  Map<String, dynamic> toMap() {
-    return {
-      'id': id,
-      'name': name,
-      'key': key,
-    };
-  }
-
-  @override
-  String toString() {
-    return 'privatekey{id: $id, name: $name, key: $key}';
+    return 'key{id: $id, name: $name, value: $value, addtime:$addtime, type:$type}';
   }
 }

@@ -3,8 +3,8 @@ import 'myHomePage.dart';
 import 'model.dart';
 
 void main() async {
-  //初始化数据库
-  DB.openDB();
+  WidgetsFlutterBinding.ensureInitialized();
+  await DB.openDB();
   runApp(MyApp());
 }
 
