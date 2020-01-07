@@ -35,10 +35,11 @@ void main() async {
 
   // print(r);
 
-  print(md5String("hello"));
-  var pt = combinPublicText("1", "2", "3");
-  print(pt);
-  print(discombinPublicText(pt));
+  // print(md5String("hello"));
+  // var pt = combinPublicText("1", "2", "3");
+  // print(pt);
+  // print(discombinPublicText(pt));
+
   await DB.openDB();
   runApp(MyApp());
 }
@@ -49,11 +50,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Contact',
+      title: 'Cipher Monkey',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: MyHomePage(title: 'Contact'),
+      home: MyHomePage(title: '🙈 Cipher Monkey 🙊'),
       debugShowCheckedModeBanner: false,
     );
   }

@@ -32,14 +32,13 @@ class _MindViewState extends State<MindView> {
   }
 
   void refresh() {
-    Future<List<CMKey>> prikeyFuture =
-        DB.queryKeys(id: "", name: "", addtime: "", type: "private");
+    Future<List<CMKey>> prikeyFuture = DB.queryKeys(type: "private");
 
     prikeyFuture.then((prikeys) {
       hasKey = prikeys.length > 0;
       if (hasKey) {
         Future<List<CMKey>> pubkeyFuture = DB.queryKeys(
-            id: prikeys[0].id.substring(0, prikeys[0].id.indexOf("_")),
+            id: prikeys[0].id.substring(0, prikeys[0].id.indexOf(".")),
             name: "",
             addtime: "",
             type: "public");
@@ -127,7 +126,7 @@ class _MindViewState extends State<MindView> {
                               type: "public",
                               value: pubkey);
                           CMKey priCMkey = CMKey(
-                              id: id + "_private",
+                              id: "$id.private",
                               name: name,
                               addtime: DateTime.now().toIso8601String(),
                               type: "private",

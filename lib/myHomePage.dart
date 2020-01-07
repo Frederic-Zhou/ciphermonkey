@@ -32,22 +32,22 @@ class _MyHomePageState extends State<MyHomePage> {
               isScrollable: true,
               tabs: [
                 Tab(
-                  text: "密联人",
+                  text: "🕵🏻‍♂️ Contact",
                 ),
                 Tab(
-                  text: "解密",
+                  text: "📝 Encrypt",
                 ),
                 Tab(
-                  text: "加密",
+                  text: "🔐 Decrypt",
                 ),
                 Tab(
-                  text: "我的",
+                  text: "🔑 Mind",
                 )
               ],
             ),
           ),
           body: TabBarView(
-            children: [ContactView(), DecryptView(), EncryptView(), MindView()],
+            children: [ContactView(), EncryptView(), DecryptView(), MindView()],
           ) // This trailing comma makes auto-formatting nicer for build methods.
           ),
     );

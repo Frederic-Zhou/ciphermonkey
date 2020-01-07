@@ -31,10 +31,10 @@ class DB {
 
   //查询键列表
   static Future<List<CMKey>> queryKeys(
-      {String id = "",
-      String name = "",
-      String addtime = "",
-      String type = ""}) async {
+      {String id: "",
+      String name: "",
+      String addtime: "",
+      String type: ""}) async {
     List<String> whereList = [];
     List<String> whereArgList = [];
     if (id != "") {
