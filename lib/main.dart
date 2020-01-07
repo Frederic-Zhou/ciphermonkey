@@ -5,7 +5,7 @@ import 'en-de-crypt.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
+/*
   final keystr = secureRandom64(32);
   print("keystr: " + keystr);
   String encrypted = aesEncrypt("Hello world", keystr);
@@ -25,7 +25,20 @@ void main() async {
   print("zlibStr: " + zlibStr);
 
   print("plantStr: " + plantStr);
+*/
 
+  // var pair = generateRSAkeyPair();
+
+  // String sign = rsaSign(pair.privateKey, "hello");
+
+  // bool r = rsaVerify(pair.publicKey, "hello", sign);
+
+  // print(r);
+
+  print(md5String("hello"));
+  var pt = combinPublicText("1", "2", "3");
+  print(pt);
+  print(discombinPublicText(pt));
   await DB.openDB();
   runApp(MyApp());
 }

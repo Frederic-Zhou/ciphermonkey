@@ -1,5 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:ciphermonkey/model.dart';
+import 'package:ciphermonkey/en-de-crypt.dart';
+import 'package:uuid/uuid.dart';
+import 'package:flutter/services.dart';
+import 'package:toast/toast.dart';
 
 class MindView extends StatefulWidget {
   MindView({Key key, this.title}) : super(key: key);
@@ -12,17 +18,43 @@ class MindView extends StatefulWidget {
 
 class _MindViewState extends State<MindView> {
   final _formKey = GlobalKey<FormState>();
+  final nicknameController = TextEditingController();
+  final passwordController = TextEditingController();
+
+  String pubkeyString = "-----";
+  String pubID;
+  String pubNickname;
   bool hasKey = false;
   @override
   void initState() {
     super.initState();
-    Future<List<CMKey>> keysFuture =
+    refresh();
+  }
+
+  void refresh() {
+    Future<List<CMKey>> prikeyFuture =
         DB.queryKeys(id: "", name: "", addtime: "", type: "private");
 
-    keysFuture.then((keys) {
-      setState(() {
-        hasKey = keys.length > 0;
-      });
+    prikeyFuture.then((prikeys) {
+      hasKey = prikeys.length > 0;
+      if (hasKey) {
+        Future<List<CMKey>> pubkeyFuture = DB.queryKeys(
+            id: prikeys[0].id.substring(0, prikeys[0].id.indexOf("_")),
+            name: "",
+            addtime: "",
+            type: "public");
+
+        pubkeyFuture.then((pubkeys) {
+          if (pubkeys.length > 0) {
+            pubkeyString = pubkeys[0].value;
+            pubID = pubkeys[0].id;
+            pubNickname = pubkeys[0].name;
+            setState(() {});
+          }
+        });
+      } else {
+        setState(() {});
+      }
     });
   }
 
@@ -38,12 +70,15 @@ class _MindViewState extends State<MindView> {
               Offstage(
                   offstage: hasKey,
                   child: TextFormField(
+                    controller: nicknameController,
                     decoration: const InputDecoration(
                       hintText: 'Your nickname',
                     ),
                     validator: (value) {
-                      if (value.isEmpty) {
-                        return 'Please enter your nickname.';
+                      Pattern pattern = r'^[a-zA-Z0-9]+$';
+                      RegExp regex = new RegExp(pattern);
+                      if (!regex.hasMatch(value)) {
+                        return 'Enter your nickname';
                       }
                       return null;
                     },
@@ -51,6 +86,7 @@ class _MindViewState extends State<MindView> {
               Offstage(
                   offstage: hasKey,
                   child: TextFormField(
+                    controller: passwordController,
                     decoration: const InputDecoration(
                       hintText: 'Your password',
                     ),
@@ -70,20 +106,61 @@ class _MindViewState extends State<MindView> {
                         // Validate will return true if the form is valid, or false if
                         // the form is invalid.
                         if (_formKey.currentState.validate()) {
-                          // Process data.
+                          // 生成 pubkey和prikey.
+                          var pair = generateRSAkeyPair();
+                          String pubkey = encodePublicKeyToPem(pair.publicKey);
+                          String prikey =
+                              encodePrivateKeyToPem(pair.privateKey);
+                          Uuid uuid = Uuid();
+                          String id =
+                              uuid.v5(Uuid.NAMESPACE_URL, "dawngrp.com");
+                          String name = nicknameController.text;
+
+                          CMKey pubCMkey = CMKey(
+                              id: id,
+                              name: name,
+                              addtime: DateTime.now().toIso8601String(),
+                              type: "public",
+                              value: pubkey);
+                          CMKey priCMkey = CMKey(
+                              id: id + "_private",
+                              name: name,
+                              addtime: DateTime.now().toIso8601String(),
+                              type: "private",
+                              value: aesEncrypt(
+                                  prikey,
+                                  base64Encode(
+                                      md5String(passwordController.text)
+                                          .codeUnits)));
+
+                          DB.addKey(pubCMkey);
+                          DB.addKey(priCMkey);
+                          refresh();
                         }
                       },
                       child: Text('Create Public Key & Private Key'),
                     ),
                   )),
-              Offstage(offstage: !hasKey, child: Text('Public Key:')),
+              Offstage(offstage: !hasKey, child: Text(pubkeyString)),
               Offstage(
                   offstage: !hasKey,
                   child: Padding(
                     padding: const EdgeInsets.symmetric(vertical: 16.0),
                     child: RaisedButton(
-                      onPressed: () {},
-                      child: Text('Send Publick Key to your contacts'),
+                      onPressed: () {
+                        String pubTxt =
+                            combinPublicText(pubID, pubNickname, pubkeyString);
+
+                        Future<void> clipboard =
+                            Clipboard.setData(ClipboardData(text: pubTxt));
+
+                        clipboard.then((noValue) {
+                          Toast.show("Copy to Clipboard Successed!!", context,
+                              duration: Toast.LENGTH_SHORT,
+                              gravity: Toast.CENTER);
+                        });
+                      },
+                      child: Text('Copy public key to Clipboard'),
                     ),
                   )),
             ],

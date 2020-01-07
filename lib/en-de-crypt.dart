@@ -4,7 +4,6 @@ import 'dart:typed_data';
 
 import 'package:encrypt/encrypt.dart';
 import 'package:crypto/crypto.dart';
-import 'package:encrypt/encrypt_io.dart';
 import "dart:convert";
 import "package:pointycastle/export.dart" as pointycastle;
 import "package:asn1lib/asn1lib.dart";
@@ -42,39 +41,32 @@ pointycastle.AsymmetricKeyPair<pointycastle.RSAPublicKey,
 }
 
 //rsa加密
-void main1() async {
-  final publicKey =
-      await parseKeyFromFile<pointycastle.RSAPublicKey>('test/public.pem');
-  final privKey =
-      await parseKeyFromFile<pointycastle.RSAPrivateKey>('test/private.pem');
-
-  final plainText = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit';
-  final encrypter = Encrypter(RSA(publicKey: publicKey, privateKey: privKey));
-
+String rsaEncrypt(pointycastle.RSAPublicKey publickey, String plainText) {
+  final encrypter = Encrypter(RSA(publicKey: publickey));
   final encrypted = encrypter.encrypt(plainText);
-  final decrypted = encrypter.decrypt(encrypted);
-
-  print(decrypted); // Lorem ipsum dolor sit amet, consectetur adipiscing elit
-  print(encrypted
-      .base64); // kO9EbgbrSwiq0EYz0aBdljHSC/rci2854Qa+nugbhKjidlezNplsEqOxR+pr1RtICZGAtv0YGevJBaRaHS17eHuj7GXo1CM3PR6pjGxrorcwR5Q7/bVEePESsimMbhHWF+AkDIX4v0CwKx9lgaTBgC8/yJKiLmQkyDCj64J3JSE=
+  return encrypted.base64;
 }
+
 //rsa解密
+String rsaDecrypt(pointycastle.RSAPrivateKey privatekey, String encryptedText) {
+  final encrypter = Encrypter(RSA(privateKey: privatekey));
+  final decrypted = encrypter.decrypt(Encrypted(base64Decode(encryptedText)));
+  return decrypted; // Lorem ipsum dolor sit amet, consectetur adipiscing elit
+}
 
 //rsa签名
-void main2() async {
-  final publicKey =
-      await parseKeyFromFile<pointycastle.RSAPublicKey>('test/public.pem');
-  final privateKey =
-      await parseKeyFromFile<pointycastle.RSAPrivateKey>('test/private.pem');
-  final signer = Signer(RSASigner(RSASignDigest.SHA256,
-      publicKey: publicKey, privateKey: privateKey));
-
-  print(signer.sign('hello world').base64);
-  print(signer.verify64('hello world',
-      'jfMhNM2v6hauQr6w3ji0xNOxGInHbeIH3DHlpf2W3vmSMyAuwGHG0KLcunggG4XtZrZPAib7oHaKEAdkHaSIGXAtEqaAvocq138oJ7BEznA4KVYuMcW9c8bRy5E4tUpikTpoO+okHdHr5YLc9y908CAQBVsfhbt0W9NClvDWegs='));
+String rsaSign(pointycastle.RSAPrivateKey privatekey, String plainText) {
+  final signer =
+      Signer(RSASigner(RSASignDigest.SHA256, privateKey: privatekey));
+  return signer.sign(plainText).base64;
 }
 
 //rsa验证签名
+bool rsaVerify(
+    pointycastle.RSAPublicKey publickey, String plainText, String signText) {
+  final signer = Signer(RSASigner(RSASignDigest.SHA256, publicKey: publickey));
+  return signer.verify64(plainText, signText);
+}
 
 //aes加密
 String aesEncrypt(String plainText, String keyBase64) {
@@ -98,9 +90,9 @@ String aesDecrypt(String encryptedText, String keyBase64) {
 }
 
 //zlib压缩
-String zlibEncode(String planText) {
+String zlibEncode(String plainText) {
   ZLibCodec zlib = ZLibCodec();
-  List<int> charCodes = zlib.encode(planText.codeUnits);
+  List<int> charCodes = zlib.encode(plainText.codeUnits);
   return String.fromCharCodes(charCodes);
 }
 
@@ -112,10 +104,14 @@ String zlibDecode(String codes) {
 }
 
 //sha256
-String sha256String(String planText) {
-  var bytes = utf8.encode(planText);
+String sha256String(String plainText) {
+  var bytes = utf8.encode(plainText);
   var digest = sha256.convert(bytes);
   return digest.toString();
+}
+
+String md5String(String plainText) {
+  return md5.convert(utf8.encode(plainText)).toString();
 }
 
 //random string
@@ -211,22 +207,22 @@ pointycastle.RSAPrivateKey parsePrivateKeyFromPem(pemString) {
   List<int> privateKeyDER = decodePEM(pemString);
   var asn1Parser = new ASN1Parser(privateKeyDER);
   var topLevelSeq = asn1Parser.nextObject() as ASN1Sequence;
-  var version = topLevelSeq.elements[0];
-  var algorithm = topLevelSeq.elements[1];
+  // var version = topLevelSeq.elements[0];
+  // var algorithm = topLevelSeq.elements[1];
   var privateKey = topLevelSeq.elements[2];
 
   asn1Parser = new ASN1Parser(privateKey.contentBytes());
   var pkSeq = asn1Parser.nextObject() as ASN1Sequence;
 
-  version = pkSeq.elements[0];
+  //version = pkSeq.elements[0];
   var modulus = pkSeq.elements[1] as ASN1Integer;
-  var publicExponent = pkSeq.elements[2] as ASN1Integer;
+  //var publicExponent = pkSeq.elements[2] as ASN1Integer;
   var privateExponent = pkSeq.elements[3] as ASN1Integer;
   var p = pkSeq.elements[4] as ASN1Integer;
   var q = pkSeq.elements[5] as ASN1Integer;
-  var exp1 = pkSeq.elements[6] as ASN1Integer;
-  var exp2 = pkSeq.elements[7] as ASN1Integer;
-  var co = pkSeq.elements[8] as ASN1Integer;
+  // var exp1 = pkSeq.elements[6] as ASN1Integer;
+  // var exp2 = pkSeq.elements[7] as ASN1Integer;
+  // var co = pkSeq.elements[8] as ASN1Integer;
 
   pointycastle.RSAPrivateKey rsaPrivateKey = pointycastle.RSAPrivateKey(
       modulus.valueAsBigInteger,
@@ -273,4 +269,12 @@ List<int> decodePEM(String pem) {
   pem = pem.replaceAll('\r', '');
 
   return base64.decode(pem);
+}
+
+String combinPublicText(String id, String name, String publicKeyPem) {
+  return base64Encode("$id;$name;$publicKeyPem".codeUnits);
+}
+
+List<String> discombinPublicText(String publicText) {
+  return String.fromCharCodes(base64Decode(publicText)).split(";");
 }
