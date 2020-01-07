@@ -16,7 +16,8 @@ class _MindViewState extends State<MindView> {
   @override
   void initState() {
     super.initState();
-    Future<List<CMKey>> keysFuture = DB.queryKeys("", "", "", "private");
+    Future<List<CMKey>> keysFuture =
+        DB.queryKeys(id: "", name: "", addtime: "", type: "private");
 
     keysFuture.then((keys) {
       setState(() {
