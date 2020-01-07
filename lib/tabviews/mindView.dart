@@ -75,10 +75,10 @@ class _MindViewState extends State<MindView> {
                       hintText: 'Your nickname',
                     ),
                     validator: (value) {
-                      Pattern pattern = r'^[a-zA-Z0-9]+$';
+                      Pattern pattern = r'^[a-zA-Z0-9]{2,20}$';
                       RegExp regex = new RegExp(pattern);
-                      if (!regex.hasMatch(value)) {
-                        return 'Enter your nickname';
+                      if (!regex.hasMatch(value.trim())) {
+                        return 'Enter your nickname(a-z and 0-9)';
                       }
                       return null;
                     },
@@ -91,9 +91,12 @@ class _MindViewState extends State<MindView> {
                       hintText: 'Your password',
                     ),
                     validator: (value) {
-                      if (value.isEmpty) {
-                        return 'Please enter password to encrypt privatekey';
+                      Pattern pattern = r'^.{6,20}$';
+                      RegExp regex = new RegExp(pattern);
+                      if (!regex.hasMatch(value.trim())) {
+                        return 'Please enter password to encrypt privatekey, (6~20 chats)';
                       }
+
                       return null;
                     },
                   )),
@@ -114,7 +117,8 @@ class _MindViewState extends State<MindView> {
                           Uuid uuid = Uuid();
                           String id =
                               uuid.v5(Uuid.NAMESPACE_URL, "dawngrp.com");
-                          String name = nicknameController.text;
+
+                          String name = nicknameController.text.trim();
 
                           CMKey pubCMkey = CMKey(
                               id: id,
