@@ -271,10 +271,10 @@ List<int> decodePEM(String pem) {
   return base64.decode(pem);
 }
 
-String combinPublicText(String id, String name, String publicKeyPem) {
+String combinPublicKey(String id, String name, String publicKeyPem) {
   return base64Encode("$id;$name;$publicKeyPem".codeUnits);
 }
 
-List<String> discombinPublicText(String publicText) {
+List<String> discombinPublicKey(String publicText) {
   return String.fromCharCodes(base64Decode(publicText)).split(";");
 }

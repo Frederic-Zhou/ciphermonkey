@@ -42,6 +42,10 @@ class _ContactViewState extends State<ContactView> {
           ),
           subtitle: Text("${pubkeys[index].id}"),
           leading: Text("${(index + 1).toString()}"),
+          onTap: () {
+            DB.currentPublicKey = pubkeys[index];
+            DefaultTabController.of(context).animateTo(1);
+          },
         );
       },
     );

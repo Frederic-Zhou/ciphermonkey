@@ -5,6 +5,8 @@ import 'package:path/path.dart';
 class DB {
   static Database instance;
 
+  static CMKey currentPublicKey;
+
   static Future openDB() async {
     instance = await openDatabase(
         join(await getDatabasesPath(), 'ciphermonkey.db'),

@@ -41,6 +41,7 @@ void main() async {
   // print(discombinPublicText(pt));
 
   await DB.openDB();
+  DB.currentPublicKey = CMKey();
   runApp(MyApp());
 }
 

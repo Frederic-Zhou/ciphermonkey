@@ -89,6 +89,8 @@ class _MindViewState extends State<MindView> {
                     decoration: const InputDecoration(
                       hintText: 'Your password',
                     ),
+                    keyboardType: TextInputType.visiblePassword,
+                    obscureText: true,
                     validator: (value) {
                       Pattern pattern = r'^.{6,20}$';
                       RegExp regex = new RegExp(pattern);
@@ -144,7 +146,10 @@ class _MindViewState extends State<MindView> {
                       child: Text('Create Public Key & Private Key'),
                     ),
                   )),
-              Offstage(offstage: !hasKey, child: Text(pubkeyString)),
+              Offstage(
+                  offstage: !hasKey,
+                  child:
+                      Text(combinPublicKey(pubID, pubNickname, pubkeyString))),
               Offstage(
                   offstage: !hasKey,
                   child: Padding(
@@ -152,7 +157,7 @@ class _MindViewState extends State<MindView> {
                     child: RaisedButton(
                       onPressed: () {
                         String pubTxt =
-                            combinPublicText(pubID, pubNickname, pubkeyString);
+                            combinPublicKey(pubID, pubNickname, pubkeyString);
 
                         Future<void> clipboard =
                             Clipboard.setData(ClipboardData(text: pubTxt));
