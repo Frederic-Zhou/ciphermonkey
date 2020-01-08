@@ -143,13 +143,15 @@ class _MindViewState extends State<MindView> {
                           refresh();
                         }
                       },
-                      child: Text('Create Public Key & Private Key'),
+                      child: Text('Create Public Key & Private Key',
+                          style: TextStyle(color: Colors.white)),
+                      color: Colors.blue,
                     ),
                   )),
               Offstage(
                   offstage: !hasKey,
-                  child:
-                      Text(combinPublicKey(pubID, pubNickname, pubkeyString))),
+                  child: Text(
+                      "id: $pubID\nnickname: $pubNickname\npublic key: ${combinPublicKey(pubID, pubNickname, pubkeyString)}")),
               Offstage(
                   offstage: !hasKey,
                   child: Padding(
@@ -168,7 +170,9 @@ class _MindViewState extends State<MindView> {
                               gravity: Toast.CENTER);
                         });
                       },
-                      child: Text('Copy public key to Clipboard'),
+                      child: Text('Copy public key to Clipboard',
+                          style: TextStyle(color: Colors.white)),
+                      color: Colors.green,
                     ),
                   )),
             ],

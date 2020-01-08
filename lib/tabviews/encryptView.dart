@@ -27,6 +27,7 @@ class _EncryptViewState extends State<EncryptView> {
   void initState() {
     super.initState();
     setState(() {});
+    print("encrypt init...");
   }
 
   @override
@@ -97,17 +98,10 @@ class _EncryptViewState extends State<EncryptView> {
                   obscureText: true,
                 ),
                 RaisedButton(
-                  child: Text('Encrypt'),
+                  child: Text('Encrypt', style: TextStyle(color: Colors.white)),
+                  color: Colors.blue,
                   onPressed: () async {
                     if (_formKey.currentState.validate()) {
-                      if (DB.currentPublicKey.id == null) {
-                        Toast.show("To Select A Contact Man", context,
-                            duration: Toast.LENGTH_SHORT,
-                            gravity: Toast.CENTER);
-
-                        return;
-                      }
-
                       //开始加密
                       final String plainText = plainTextController.text;
                       final String password = passwordController.text;
@@ -153,9 +147,9 @@ class _EncryptViewState extends State<EncryptView> {
                       final encryptedKey = rsaEncrypt(
                           parsePublicKeyFromPem(DB.currentPublicKey.value),
                           secretKey);
-
-                      finalEncryptedReport =
-                          "$encryptedKey;$sign;$encryptedText";
+                      //7 组合报文，编码成base64
+                      finalEncryptedReport = base64Encode(
+                          "$encryptedKey;$sign;$encryptedText".codeUnits);
 
                       setState(() {});
                     }
@@ -163,7 +157,9 @@ class _EncryptViewState extends State<EncryptView> {
                 ),
                 Divider(),
                 RaisedButton(
-                  child: Text('Copy Encrypted Text to Clipboard'),
+                  child: Text('Copy Encrypted Text to Clipboard',
+                      style: TextStyle(color: Colors.white)),
+                  color: Colors.green,
                   onPressed: () {
                     if (finalEncryptedReport.length > 0) {
                       Future<void> clipboard = Clipboard.setData(

@@ -48,8 +48,7 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
           body: TabBarView(
             children: [ContactView(), EncryptView(), DecryptView(), MindView()],
-          ) // This trailing comma makes auto-formatting nicer for build methods.
-          ),
+          )),
     );
   }
 }
