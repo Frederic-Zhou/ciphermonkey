@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:ciphermonkey/model.dart';
 import 'package:toast/toast.dart';
 import 'package:flutter/services.dart';
+import 'package:ciphermonkey/en-de-crypt.dart';
 
 class ContactView extends StatefulWidget {
   ContactView({Key key, this.title}) : super(key: key);
@@ -25,6 +26,7 @@ class _ContactViewState extends State<ContactView> {
 
     pubkeyFuture.then((keys) {
       pubkeys = keys;
+      //print(keys.length);
       setState(() {});
     });
   }
@@ -57,9 +59,24 @@ class _ContactViewState extends State<ContactView> {
         onPressed: () {
           Future<ClipboardData> clipboard = Clipboard.getData("text/plain");
 
-          clipboard.then((value) {
-            Toast.show("Copy to Clipboard Successed!!${value.text}", context,
-                duration: Toast.LENGTH_SHORT, gravity: Toast.CENTER);
+          clipboard.then((clipboard) {
+            try {
+              List<String> contact = discombinPublicKey(clipboard.text);
+
+              DB.addKey(CMKey(
+                  id: contact[0],
+                  name: contact[1],
+                  value: contact[2],
+                  type: "public",
+                  addtime: DateTime.now().toIso8601String()));
+
+              refresh();
+              Toast.show("Add Successed!!", context,
+                  duration: Toast.LENGTH_SHORT, gravity: Toast.CENTER);
+            } catch (e) {
+              Toast.show("Add Fail!!" + e.toString(), context,
+                  duration: Toast.LENGTH_SHORT, gravity: Toast.CENTER);
+            }
           });
         },
         label: Text('Add From Clipboard'),
