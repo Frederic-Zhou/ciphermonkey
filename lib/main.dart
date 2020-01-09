@@ -1,47 +1,12 @@
 import 'package:flutter/material.dart';
-import 'myHomePage.dart';
+import 'globels.dart';
 import 'model.dart';
-import 'en-de-crypt.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-/*
-  final keystr = secureRandom64(32);
-  print("keystr: " + keystr);
-  String encrypted = aesEncrypt("Hello world", keystr);
-  String decrypted = aesDecrypt(encrypted, keystr);
-
-  String zlibStr = zlibEncode("Hello world!!");
-  String plantStr = zlibDecode(zlibStr);
-
-  final pair = generateRSAkeyPair();
-  print(encodePublicKeyToPem(pair.publicKey));
-
-  print("encrypted: " + encrypted);
-  print("decrypted: " + decrypted);
-
-  print("sha256: " + sha256String("hello"));
-
-  print("zlibStr: " + zlibStr);
-
-  print("plantStr: " + plantStr);
-*/
-
-  // var pair = generateRSAkeyPair();
-
-  // String sign = rsaSign(pair.privateKey, "hello");
-
-  // bool r = rsaVerify(pair.publicKey, "hello", sign);
-
-  // print(r);
-
-  // print(md5String("hello"));
-  // var pt = combinPublicText("1", "2", "3");
-  // print(pt);
-  // print(discombinPublicText(pt));
 
   await DB.openDB();
-  DB.currentPublicKey = CMKey();
+
   runApp(MyApp());
 }
 
@@ -57,6 +22,55 @@ class MyApp extends StatelessWidget {
       ),
       home: MyHomePage(title: '🙈 Cipher Monkey 🙊'),
       debugShowCheckedModeBanner: false,
+    );
+  }
+}
+
+class MyHomePage extends StatefulWidget {
+  MyHomePage({Key key, this.title}) : super(key: key);
+
+  final String title;
+
+  @override
+  _MyHomePageState createState() => _MyHomePageState();
+}
+
+class _MyHomePageState extends State<MyHomePage> {
+  @override
+  void initState() {
+    super.initState();
+
+    setState(() {});
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return DefaultTabController(
+      length: 4,
+      child: Scaffold(
+          appBar: AppBar(
+            title: Text(widget.title),
+            bottom: TabBar(
+              isScrollable: true,
+              tabs: [
+                Tab(
+                  text: "🕵🏻‍♂️ Contact",
+                ),
+                Tab(
+                  text: "📝 Encrypt",
+                ),
+                Tab(
+                  text: "🔐 Decrypt",
+                ),
+                Tab(
+                  text: "🔑 Mind",
+                )
+              ],
+            ),
+          ),
+          body: TabBarView(
+            children: tabViews,
+          )),
     );
   }
 }

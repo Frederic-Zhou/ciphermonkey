@@ -1,8 +1,10 @@
+import 'package:ciphermonkey/tabviews/encryptView.dart';
 import 'package:flutter/material.dart';
 import 'package:ciphermonkey/model.dart';
 import 'package:toast/toast.dart';
 import 'package:flutter/services.dart';
 import 'package:ciphermonkey/en-de-crypt.dart';
+import 'package:ciphermonkey/globels.dart';
 
 class ContactView extends StatefulWidget {
   ContactView({Key key, this.title}) : super(key: key);
@@ -49,7 +51,8 @@ class _ContactViewState extends State<ContactView> {
             subtitle: Text("${pubkeys[index].id}"),
             leading: Text("${(index + 1).toString()}"),
             onTap: () {
-              DB.currentPublicKey = pubkeys[index];
+              currentPublicKey = pubkeys[index];
+
               DefaultTabController.of(context).animateTo(1);
             },
           );

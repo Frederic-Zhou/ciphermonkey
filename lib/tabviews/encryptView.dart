@@ -1,3 +1,8 @@
+//BUG todo:
+/*
+1. 当输入框聚焦时，切换tab 不会调用initState。导致换Contact后，显示的名称和ID不符合。
+
+*/
 import 'dart:convert';
 
 import 'package:ciphermonkey/en-de-crypt.dart';
@@ -5,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:ciphermonkey/model.dart';
 import 'package:flutter/services.dart';
 import 'package:toast/toast.dart';
+import 'package:ciphermonkey/globels.dart';
 
 class EncryptView extends StatefulWidget {
   EncryptView({Key key, this.title}) : super(key: key);
@@ -12,7 +18,7 @@ class EncryptView extends StatefulWidget {
   final String title;
 
   @override
-  _EncryptViewState createState() => _EncryptViewState();
+  _EncryptViewState createState() => new _EncryptViewState();
 }
 
 class _EncryptViewState extends State<EncryptView> {
@@ -55,7 +61,7 @@ class _EncryptViewState extends State<EncryptView> {
                       },
                     ),
                     Text(
-                        'Encrypt to : ${DB.currentPublicKey.name}\nid:${DB.currentPublicKey.id}'),
+                        'Encrypt to : ${currentPublicKey.name}\nid:${currentPublicKey.id}'),
                   ],
                 ),
                 TextFormField(
@@ -101,13 +107,19 @@ class _EncryptViewState extends State<EncryptView> {
                   child: Text('Encrypt', style: TextStyle(color: Colors.white)),
                   color: Colors.blue,
                   onPressed: () async {
+                    if (currentPublicKey.id == null) {
+                      Toast.show("Select A contact first!", context,
+                          duration: Toast.LENGTH_SHORT, gravity: Toast.CENTER);
+                      return;
+                    }
+
                     if (_formKey.currentState.validate()) {
                       //开始加密
                       final String plainText = plainTextController.text;
                       final String password = passwordController.text;
                       //1.组合报文并2.压缩内容
                       final String reportText = zlibEncode(
-                          "${DB.currentPublicKey.id};${DB.currentPublicKey.name};${DateTime.now().toIso8601String()};$plainText");
+                          "${currentPublicKey.id};${currentPublicKey.name};${DateTime.now().toIso8601String()};$plainText");
 
                       //3.签名
                       //3.1 生成指纹hash
@@ -145,7 +157,7 @@ class _EncryptViewState extends State<EncryptView> {
                       final encryptedText = aesEncrypt(reportText, secretKey);
                       //6 加密密钥
                       final encryptedKey = rsaEncrypt(
-                          parsePublicKeyFromPem(DB.currentPublicKey.value),
+                          parsePublicKeyFromPem(currentPublicKey.value),
                           secretKey);
                       //7 组合报文，编码成base64
                       finalEncryptedReport = base64Encode(
