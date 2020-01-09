@@ -1,10 +1,8 @@
-import 'package:ciphermonkey/tabviews/encryptView.dart';
 import 'package:flutter/material.dart';
 import 'package:ciphermonkey/model.dart';
 import 'package:toast/toast.dart';
 import 'package:flutter/services.dart';
 import 'package:ciphermonkey/en-de-crypt.dart';
-import 'package:ciphermonkey/globels.dart';
 
 class ContactView extends StatefulWidget {
   ContactView({Key key, this.title}) : super(key: key);
@@ -50,11 +48,7 @@ class _ContactViewState extends State<ContactView> {
             ),
             subtitle: Text("${pubkeys[index].id}"),
             leading: Text("${(index + 1).toString()}"),
-            onTap: () {
-              currentPublicKey = pubkeys[index];
-
-              DefaultTabController.of(context).animateTo(1);
-            },
+            onTap: () {},
           );
         },
       )),
@@ -75,10 +69,14 @@ class _ContactViewState extends State<ContactView> {
 
               refresh();
               Toast.show("Add Successed!!", context,
-                  duration: Toast.LENGTH_SHORT, gravity: Toast.CENTER);
+                  duration: Toast.LENGTH_LONG,
+                  gravity: Toast.CENTER,
+                  backgroundColor: Colors.grey);
             } catch (e) {
-              Toast.show("Add Fail!!" + e.toString(), context,
-                  duration: Toast.LENGTH_SHORT, gravity: Toast.CENTER);
+              Toast.show("Add Fail!!", context,
+                  duration: Toast.LENGTH_LONG,
+                  gravity: Toast.CENTER,
+                  backgroundColor: Colors.red);
             }
           });
         },

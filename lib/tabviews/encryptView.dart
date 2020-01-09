@@ -1,8 +1,3 @@
-//BUG todo:
-/*
-1. 当输入框聚焦时，切换tab 不会调用initState。导致换Contact后，显示的名称和ID不符合。
-
-*/
 import 'dart:convert';
 
 import 'package:ciphermonkey/en-de-crypt.dart';
@@ -10,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:ciphermonkey/model.dart';
 import 'package:flutter/services.dart';
 import 'package:toast/toast.dart';
-import 'package:ciphermonkey/globels.dart';
 
 class EncryptView extends StatefulWidget {
   EncryptView({Key key, this.title}) : super(key: key);
@@ -28,12 +22,31 @@ class _EncryptViewState extends State<EncryptView> {
 
   int maxLine = 2;
   String finalEncryptedReport = "";
-
+  CMKey dropdownValue;
+  List<DropdownMenuItem> keyList = new List();
   @override
   void initState() {
     super.initState();
-    setState(() {});
-    print("encrypt init...");
+    try {
+      getKeyListData();
+    } catch (e) {
+      print("get key list error.");
+    }
+  }
+
+  void getKeyListData() {
+    Future<List<CMKey>> pubkeysF = DB.queryKeys(type: "public");
+    pubkeysF.then((pubkeys) {
+      pubkeys.forEach((pubkey) {
+        setState(() {
+          DropdownMenuItem dropdownMenuItem = new DropdownMenuItem(
+            child: new Text("${pubkey.name}:${pubkey.id}"),
+            value: pubkey,
+          );
+          keyList.add(dropdownMenuItem);
+        });
+      });
+    });
   }
 
   @override
@@ -48,31 +61,32 @@ class _EncryptViewState extends State<EncryptView> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Row(
-                  children: <Widget>[
-                    IconButton(
-                      icon: Icon(Icons.person_add),
-                      tooltip: 'Encrypt to who?',
-                      onPressed: () {
-                        DefaultTabController.of(context).animateTo(0);
-                        Toast.show("To Select A Contact Man", context,
-                            duration: Toast.LENGTH_SHORT,
-                            gravity: Toast.CENTER);
-                      },
+                new DropdownButton(
+                    value: dropdownValue,
+                    icon: Icon(
+                      Icons.person_add,
+                      color: Colors.blue,
                     ),
-                    Text(
-                        'Encrypt to : ${currentPublicKey.name}\nid:${currentPublicKey.id}'),
-                  ],
-                ),
+                    iconSize: 24,
+                    elevation: 16,
+                    style: TextStyle(color: Colors.blue),
+                    underline: Container(
+                      height: 2,
+                      color: Colors.blue,
+                    ),
+                    onChanged: (newValue) {
+                      setState(() {
+                        dropdownValue = newValue;
+                      });
+                    },
+                    items: keyList),
                 TextFormField(
                   controller: plainTextController,
                   decoration: const InputDecoration(
                     hintText: 'Text to encrypt',
                   ),
                   validator: (value) {
-                    Pattern pattern = r'^.+$';
-                    RegExp regex = new RegExp(pattern);
-                    if (!regex.hasMatch(value.trim())) {
+                    if (value.length == 0) {
                       return 'Enter some text';
                     }
                     return null;
@@ -107,9 +121,11 @@ class _EncryptViewState extends State<EncryptView> {
                   child: Text('Encrypt', style: TextStyle(color: Colors.white)),
                   color: Colors.blue,
                   onPressed: () async {
-                    if (currentPublicKey.id == null) {
+                    if (dropdownValue.id == null) {
                       Toast.show("Select A contact first!", context,
-                          duration: Toast.LENGTH_SHORT, gravity: Toast.CENTER);
+                          duration: Toast.LENGTH_LONG,
+                          gravity: Toast.CENTER,
+                          backgroundColor: Colors.red);
                       return;
                     }
 
@@ -119,7 +135,7 @@ class _EncryptViewState extends State<EncryptView> {
                       final String password = passwordController.text;
                       //1.组合报文并2.压缩内容
                       final String reportText = zlibEncode(
-                          "${currentPublicKey.id};${currentPublicKey.name};${DateTime.now().toIso8601String()};$plainText");
+                          "${dropdownValue.id};${dropdownValue.name};${DateTime.now().toIso8601String()};$plainText");
 
                       //3.签名
                       //3.1 生成指纹hash
@@ -130,8 +146,9 @@ class _EncryptViewState extends State<EncryptView> {
 
                       if (prikeys.length != 1) {
                         Toast.show("PrivateKey error", context,
-                            duration: Toast.LENGTH_SHORT,
-                            gravity: Toast.CENTER);
+                            duration: Toast.LENGTH_LONG,
+                            gravity: Toast.CENTER,
+                            backgroundColor: Colors.red);
                         return;
                       }
                       //用密码解密私钥
@@ -141,8 +158,9 @@ class _EncryptViewState extends State<EncryptView> {
                             base64Encode(md5String(password).codeUnits));
                       } catch (e) {
                         Toast.show("Password is wrong!", context,
-                            duration: Toast.LENGTH_SHORT,
-                            gravity: Toast.CENTER);
+                            duration: Toast.LENGTH_LONG,
+                            gravity: Toast.CENTER,
+                            backgroundColor: Colors.red);
                         return;
                       }
 
@@ -157,7 +175,7 @@ class _EncryptViewState extends State<EncryptView> {
                       final encryptedText = aesEncrypt(reportText, secretKey);
                       //6 加密密钥
                       final encryptedKey = rsaEncrypt(
-                          parsePublicKeyFromPem(currentPublicKey.value),
+                          parsePublicKeyFromPem(dropdownValue.value),
                           secretKey);
                       //7 组合报文，编码成base64
                       finalEncryptedReport = base64Encode(
@@ -179,18 +197,21 @@ class _EncryptViewState extends State<EncryptView> {
 
                       clipboard.then((noValue) {
                         Toast.show("Copy to Clipboard Successed!!", context,
-                            duration: Toast.LENGTH_SHORT,
-                            gravity: Toast.CENTER);
+                            duration: Toast.LENGTH_LONG,
+                            gravity: Toast.CENTER,
+                            backgroundColor: Colors.grey);
                       });
                     } else {
                       Toast.show("Encrypt first", context,
-                          duration: Toast.LENGTH_SHORT, gravity: Toast.CENTER);
+                          duration: Toast.LENGTH_LONG,
+                          gravity: Toast.CENTER,
+                          backgroundColor: Colors.red);
                     }
 
                     setState(() {});
                   },
                 ),
-                Text("Encrypted Text:$finalEncryptedReport")
+                Text("Encrypted Text:\n$finalEncryptedReport")
               ],
             ),
           )),

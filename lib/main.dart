@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
-import 'globels.dart';
 import 'model.dart';
+import 'tabviews/contactView.dart';
+import 'tabviews/decryptView.dart';
+import 'tabviews/encryptView.dart';
+import 'tabviews/mindView.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
   await DB.openDB();
-
   runApp(MyApp());
 }
 
@@ -69,7 +70,7 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ),
           body: TabBarView(
-            children: tabViews,
+            children: [ContactView(), EncryptView(), DecryptView(), MindView()],
           )),
     );
   }

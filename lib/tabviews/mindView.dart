@@ -166,8 +166,9 @@ class _MindViewState extends State<MindView> {
 
                         clipboard.then((noValue) {
                           Toast.show("Copy to Clipboard Successed!!", context,
-                              duration: Toast.LENGTH_SHORT,
-                              gravity: Toast.CENTER);
+                              duration: Toast.LENGTH_LONG,
+                              gravity: Toast.CENTER,
+                              backgroundColor: Colors.grey);
                         });
                       },
                       child: Text('Copy public key to Clipboard',
