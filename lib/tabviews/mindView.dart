@@ -1,3 +1,4 @@
+//TODO: create fingerCode
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -22,8 +23,8 @@ class _MindViewState extends State<MindView> {
   final passwordController = TextEditingController();
 
   String pubkeyString = "-----";
-  String pubID;
-  String pubNickname;
+  String pubID = "";
+  String pubNickname = "";
   bool hasKey = false;
   @override
   void initState() {
@@ -68,113 +69,114 @@ class _MindViewState extends State<MindView> {
             children: <Widget>[
               Offstage(
                   offstage: hasKey,
-                  child: TextFormField(
-                    controller: nicknameController,
-                    decoration: const InputDecoration(
-                      hintText: 'Your nickname',
-                    ),
-                    validator: (value) {
-                      Pattern pattern = r'^[a-zA-Z0-9]{2,20}$';
-                      RegExp regex = new RegExp(pattern);
-                      if (!regex.hasMatch(value.trim())) {
-                        return 'Enter your nickname(a-z and 0-9)';
-                      }
-                      return null;
-                    },
-                  )),
-              Offstage(
-                  offstage: hasKey,
-                  child: TextFormField(
-                    controller: passwordController,
-                    decoration: const InputDecoration(
-                      hintText: 'Your password',
-                    ),
-                    keyboardType: TextInputType.visiblePassword,
-                    obscureText: true,
-                    validator: (value) {
-                      Pattern pattern = r'^.{6,20}$';
-                      RegExp regex = new RegExp(pattern);
-                      if (!regex.hasMatch(value.trim())) {
-                        return 'Please enter password to encrypt privatekey, (6~20 chats)';
-                      }
+                  child: Column(
+                    children: <Widget>[
+                      TextFormField(
+                        controller: nicknameController,
+                        decoration: const InputDecoration(
+                          hintText: 'Your nickname',
+                        ),
+                        validator: (value) {
+                          Pattern pattern = r'^[a-zA-Z0-9]{2,20}$';
+                          RegExp regex = new RegExp(pattern);
+                          if (!regex.hasMatch(value.trim())) {
+                            return 'Enter your nickname(a-z and 0-9)';
+                          }
+                          return null;
+                        },
+                      ),
+                      TextFormField(
+                        controller: passwordController,
+                        decoration: const InputDecoration(
+                          hintText: 'Your password',
+                        ),
+                        keyboardType: TextInputType.visiblePassword,
+                        obscureText: true,
+                        validator: (value) {
+                          Pattern pattern = r'^.{6,20}$';
+                          RegExp regex = new RegExp(pattern);
+                          if (!regex.hasMatch(value.trim())) {
+                            return 'Please enter password to encrypt privatekey, (6~20 chats)';
+                          }
 
-                      return null;
-                    },
-                  )),
-              Offstage(
-                  offstage: hasKey,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 16.0),
-                    child: RaisedButton(
-                      onPressed: () {
-                        // Validate will return true if the form is valid, or false if
-                        // the form is invalid.
-                        if (_formKey.currentState.validate()) {
-                          // 生成 pubkey和prikey.
-                          var pair = generateRSAkeyPair();
-                          String pubkey = encodePublicKeyToPem(pair.publicKey);
-                          String prikey =
-                              encodePrivateKeyToPem(pair.privateKey);
-                          Uuid uuid = Uuid();
-                          String id =
-                              uuid.v5(Uuid.NAMESPACE_URL, "dawngrp.com");
+                          return null;
+                        },
+                      ),
+                      RaisedButton(
+                        onPressed: () {
+                          // Validate will return true if the form is valid, or false if
+                          // the form is invalid.
+                          if (_formKey.currentState.validate()) {
+                            // 生成 pubkey和prikey.
+                            var pair = generateRSAkeyPair();
+                            String pubkey =
+                                encodePublicKeyToPem(pair.publicKey);
+                            String prikey =
+                                encodePrivateKeyToPem(pair.privateKey);
+                            Uuid uuid = Uuid();
+                            String id =
+                                uuid.v5(Uuid.NAMESPACE_URL, "dawngrp.com");
 
-                          String name = nicknameController.text.trim();
+                            String name = nicknameController.text.trim();
 
-                          CMKey pubCMkey = CMKey(
-                              id: id,
-                              name: name,
-                              addtime: DateTime.now().toIso8601String(),
-                              type: "public",
-                              value: pubkey);
-                          CMKey priCMkey = CMKey(
-                              id: "$id.private",
-                              name: name,
-                              addtime: DateTime.now().toIso8601String(),
-                              type: "private",
-                              value: aesEncrypt(
-                                  prikey,
-                                  base64Encode(
-                                      md5String(passwordController.text)
-                                          .codeUnits)));
+                            CMKey pubCMkey = CMKey(
+                                id: id,
+                                name: name,
+                                addtime: DateTime.now().toIso8601String(),
+                                type: "public",
+                                value: pubkey);
+                            CMKey priCMkey = CMKey(
+                                id: "$id.private",
+                                name: name,
+                                addtime: DateTime.now().toIso8601String(),
+                                type: "private",
+                                value: aesEncrypt(
+                                    prikey,
+                                    base64Encode(
+                                        md5String(passwordController.text)
+                                            .codeUnits)));
 
-                          DB.addKey(pubCMkey);
-                          DB.addKey(priCMkey);
-                          refresh();
-                        }
-                      },
-                      child: Text('Create Public Key & Private Key',
-                          style: TextStyle(color: Colors.white)),
-                      color: Colors.blue,
-                    ),
+                            DB.addKey(pubCMkey);
+                            DB.addKey(priCMkey);
+                            refresh();
+                          }
+                        },
+                        child: Text('Create Public Key & Private Key',
+                            style: TextStyle(color: Colors.white)),
+                        color: Colors.blue,
+                      ),
+                    ],
                   )),
               Offstage(
                   offstage: !hasKey,
-                  child: Text(
-                      "id: $pubID\nnickname: $pubNickname\npublic key: ${combinPublicKey(pubID, pubNickname, pubkeyString)}")),
-              Offstage(
-                  offstage: !hasKey,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 16.0),
-                    child: RaisedButton(
-                      onPressed: () {
-                        String pubTxt =
-                            combinPublicKey(pubID, pubNickname, pubkeyString);
+                  child: Column(
+                    children: <Widget>[
+                      Text("ID: ${pubID.toUpperCase()}"),
+                      Text("NICKNAME: $pubNickname"),
+                      Text(
+                          "MD5: ${md5String(combinPublicKey(pubID, pubNickname, pubkeyString)).toUpperCase()}"),
+                      RaisedButton(
+                        onPressed: () {
+                          String pubTxt =
+                              combinPublicKey(pubID, pubNickname, pubkeyString);
 
-                        Future<void> clipboard =
-                            Clipboard.setData(ClipboardData(text: pubTxt));
+                          Future<void> clipboard =
+                              Clipboard.setData(ClipboardData(text: pubTxt));
 
-                        clipboard.then((noValue) {
-                          Toast.show("Copy to Clipboard Successed!!", context,
-                              duration: Toast.LENGTH_LONG,
-                              gravity: Toast.CENTER,
-                              backgroundColor: Colors.grey);
-                        });
-                      },
-                      child: Text('Copy public key to Clipboard',
-                          style: TextStyle(color: Colors.white)),
-                      color: Colors.green,
-                    ),
+                          clipboard.then((noValue) {
+                            Toast.show("Copy to Clipboard Successed!!", context,
+                                duration: Toast.LENGTH_LONG,
+                                gravity: Toast.CENTER,
+                                backgroundColor: Colors.grey);
+                          });
+                        },
+                        child: Text('Copy public key to Clipboard',
+                            style: TextStyle(color: Colors.white)),
+                        color: Colors.green,
+                      ),
+                      Text(
+                          "PUBLIC KEY: ${combinPublicKey(pubID, pubNickname, pubkeyString)}"),
+                    ],
                   )),
             ],
           ),

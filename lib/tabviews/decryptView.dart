@@ -35,7 +35,7 @@ class _DecryptViewState extends State<DecryptView> {
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            //crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               TextFormField(
                 controller: passwordController,
@@ -104,15 +104,22 @@ class _DecryptViewState extends State<DecryptView> {
                       return;
                     }
 
-                    //从pem格式转换成私钥对象
-                    final privatekey = parsePrivateKeyFromPem(privatekeyPem);
-                    //得到密钥
-                    final secretKey = rsaDecrypt(privatekey, encryptedKey);
+                    try {
+                      //从pem格式转换成私钥对象
+                      final privatekey = parsePrivateKeyFromPem(privatekeyPem);
+                      //得到密钥
+                      final secretKey = rsaDecrypt(privatekey, encryptedKey);
 
-                    //得到文本
-                    final reportText = aesDecrypt(encryptedText, secretKey);
-                    //解压文本并得到第4个文本节。
-                    plainText = zlibDecode(reportText).split(";")[3];
+                      //得到文本
+                      final reportText = aesDecrypt(encryptedText, secretKey);
+                      //解压文本并得到第4个文本节。
+                      plainText = zlibDecode(reportText).split(";")[3];
+                    } catch (e) {
+                      Toast.show("Decrypt error!!", context,
+                          duration: Toast.LENGTH_LONG,
+                          gravity: Toast.CENTER,
+                          backgroundColor: Colors.red);
+                    }
 
                     //rsaVerify(publickey, sha256String(reportText), sign);
 

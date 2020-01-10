@@ -34,13 +34,19 @@ class _EncryptViewState extends State<EncryptView> {
     }
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
   void getKeyListData() {
     Future<List<CMKey>> pubkeysF = DB.queryKeys(type: "public");
     pubkeysF.then((pubkeys) {
       pubkeys.forEach((pubkey) {
+        if (!mounted) return;
         setState(() {
           DropdownMenuItem dropdownMenuItem = new DropdownMenuItem(
-            child: new Text("${pubkey.name}:${pubkey.id}"),
+            child: new Text("${pubkey.name}:${pubkey.id.toUpperCase()}"),
             value: pubkey,
           );
           keyList.add(dropdownMenuItem);
@@ -59,7 +65,7 @@ class _EncryptViewState extends State<EncryptView> {
             padding:
                 const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              //crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 new DropdownButton(
                     value: dropdownValue,
@@ -68,7 +74,7 @@ class _EncryptViewState extends State<EncryptView> {
                       color: Colors.blue,
                     ),
                     iconSize: 24,
-                    elevation: 16,
+                    elevation: 24,
                     style: TextStyle(color: Colors.blue),
                     underline: Container(
                       height: 2,
@@ -187,7 +193,7 @@ class _EncryptViewState extends State<EncryptView> {
                 ),
                 Divider(),
                 RaisedButton(
-                  child: Text('Copy Encrypted Text to Clipboard',
+                  child: Text('Copy Encrypted Text ⬇️ to Clipboard',
                       style: TextStyle(color: Colors.white)),
                   color: Colors.green,
                   onPressed: () {
@@ -211,7 +217,7 @@ class _EncryptViewState extends State<EncryptView> {
                     setState(() {});
                   },
                 ),
-                Text("Encrypted Text:\n$finalEncryptedReport")
+                Text("$finalEncryptedReport")
               ],
             ),
           )),
