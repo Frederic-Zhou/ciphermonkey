@@ -46,7 +46,7 @@ class _EncryptViewState extends State<EncryptView> {
         if (!mounted) return;
         setState(() {
           DropdownMenuItem dropdownMenuItem = new DropdownMenuItem(
-            child: new Text("${pubkey.name}:${pubkey.id.toUpperCase()}"),
+            child: new Text("${pubkey.name}\n${pubkey.id.toUpperCase()}"),
             value: pubkey,
           );
           keyList.add(dropdownMenuItem);
@@ -141,7 +141,8 @@ class _EncryptViewState extends State<EncryptView> {
                       final String plainText = plainTextController.text;
                       final String password = passwordController.text;
                       //1.组合报文并2.压缩内容
-                      final String reportText = zlibEncode(plainText);
+                      //final String reportText = zlibEncode(plainText);
+                      final String reportText = plainText;
 
                       //3.签名
                       //3.1 生成指纹hash

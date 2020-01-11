@@ -130,14 +130,16 @@ class _DecryptViewState extends State<DecryptView> {
                             parsePublicKeyFromPem(pubkeys[i].value);
                         if (rsaVerify(
                             publickey, sha256String(reportText), sign)) {
-                          from = "From:${pubkeys[i].name}/${pubkeys[i].id}";
+                          from =
+                              "From:${pubkeys[i].name}/${pubkeys[i].id.toUpperCase()}";
 
                           break;
                         }
                       }
 
                       //解压文本。
-                      plainText = zlibDecode(reportText);
+                      //plainText = zlibDecode(reportText);
+                      plainText = reportText;
                     } catch (e) {
                       Toast.show("Decrypt error!!", context,
                           duration: Toast.LENGTH_LONG,
@@ -185,20 +187,20 @@ class _DecryptViewState extends State<DecryptView> {
                 textAlign: TextAlign.center,
               ),
               Divider(
-                  thickness: 0,
-                  color: Colors.grey,
-                ),
+                thickness: 0,
+                color: Colors.grey,
+              ),
               Text(
                 "$from",
                 style: TextStyle(fontSize: 12, color: Colors.green),
               ),
               Divider(
-                  thickness: 0,
-                  color: Colors.grey,
-                ),
+                thickness: 0,
+                color: Colors.grey,
+              ),
               Text(
                 "$plainText",
-                style: TextStyle(fontSize: 14, color: Colors.blueGrey),
+                style: TextStyle(fontSize: 16, color: Colors.black),
               )
             ],
           ),

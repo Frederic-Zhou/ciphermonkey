@@ -1,5 +1,5 @@
 name: ciphermonkey
-description: A new Flutter project.
+description: Easy Cipher App NO SERVER, NO NETWORK.
 
 # The following defines the version and build number for your application.
 # A version number is three numbers separated by dots, like 1.2.43
@@ -22,8 +22,6 @@ dependencies:
   #添加数据库依赖
   sqflite: ^1.2.0
   encrypt: ^4.0.0
-  device_info: ^0.4.1+4
-  dbcrypt: ^1.0.0
   uuid: ^2.0.4
   toast: ^0.1.5
   
