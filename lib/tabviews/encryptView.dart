@@ -65,6 +65,7 @@ class _EncryptViewState extends State<EncryptView> {
             padding:
                 const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               //crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 new DropdownButton(
@@ -140,8 +141,7 @@ class _EncryptViewState extends State<EncryptView> {
                       final String plainText = plainTextController.text;
                       final String password = passwordController.text;
                       //1.组合报文并2.压缩内容
-                      final String reportText = zlibEncode(
-                          "${dropdownValue.id};${dropdownValue.name};${DateTime.now().toIso8601String()};$plainText");
+                      final String reportText = zlibEncode(plainText);
 
                       //3.签名
                       //3.1 生成指纹hash
@@ -205,7 +205,7 @@ class _EncryptViewState extends State<EncryptView> {
                         Toast.show("Copy to Clipboard Successed!!", context,
                             duration: Toast.LENGTH_LONG,
                             gravity: Toast.CENTER,
-                            backgroundColor: Colors.grey);
+                            backgroundColor: Colors.blueGrey);
                       });
                     } else {
                       Toast.show("Encrypt first", context,
@@ -217,7 +217,17 @@ class _EncryptViewState extends State<EncryptView> {
                     setState(() {});
                   },
                 ),
-                Text("$finalEncryptedReport")
+                Text(
+                  "🙈 Encrypted Text 🙈",
+                  style: TextStyle(fontSize: 20, color: Colors.black),
+                  textAlign: TextAlign.center,
+                ),
+                Text(
+                  "$finalEncryptedReport",
+                  style: TextStyle(fontSize: 14, color: Colors.blueGrey),
+                  maxLines: 5,
+                  overflow: TextOverflow.fade,
+                )
               ],
             ),
           )),

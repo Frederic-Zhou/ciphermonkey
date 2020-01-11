@@ -149,11 +149,19 @@ class _MindViewState extends State<MindView> {
               Offstage(
                   offstage: !hasKey,
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: <Widget>[
-                      Text("ID: ${pubID.toUpperCase()}"),
-                      Text("NICKNAME: $pubNickname"),
                       Text(
-                          "MD5: ${md5String(combinPublicKey(pubID, pubNickname, pubkeyString)).toUpperCase()}"),
+                        "NAME: $pubNickname",
+                        style: TextStyle(fontSize: 16, color: Colors.blueGrey),
+                      ),
+                      Text("ID: ${pubID.toUpperCase()}",
+                          style:
+                              TextStyle(fontSize: 16, color: Colors.blueGrey)),
+                      Text(
+                          "MD5: ${md5String(combinPublicKey(pubID, pubNickname, pubkeyString)).toUpperCase()}",
+                          style:
+                              TextStyle(fontSize: 16, color: Colors.blueGrey)),
                       RaisedButton(
                         onPressed: () {
                           String pubTxt =
@@ -166,7 +174,7 @@ class _MindViewState extends State<MindView> {
                             Toast.show("Copy to Clipboard Successed!!", context,
                                 duration: Toast.LENGTH_LONG,
                                 gravity: Toast.CENTER,
-                                backgroundColor: Colors.grey);
+                                backgroundColor: Colors.blueGrey);
                           });
                         },
                         child: Text('Copy public key to Clipboard',
@@ -174,7 +182,16 @@ class _MindViewState extends State<MindView> {
                         color: Colors.green,
                       ),
                       Text(
-                          "PUBLIC KEY: ${combinPublicKey(pubID, pubNickname, pubkeyString)}"),
+                        "🔑 PUBLIC KEY 🔑",
+                        style: TextStyle(fontSize: 20, color: Colors.black),
+                        textAlign: TextAlign.center,
+                      ),
+                      Text(
+                        "${combinPublicKey(pubID, pubNickname, pubkeyString)}",
+                        style: TextStyle(fontSize: 14, color: Colors.blueGrey),
+                        maxLines: 5,
+                        overflow: TextOverflow.fade,
+                      ),
                     ],
                   )),
             ],

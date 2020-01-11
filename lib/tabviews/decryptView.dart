@@ -21,6 +21,7 @@ class _DecryptViewState extends State<DecryptView> {
   final _formKey = GlobalKey<FormState>();
   final passwordController = TextEditingController();
   String plainText = "";
+  String from = "";
   @override
   void initState() {
     super.initState();
@@ -35,7 +36,7 @@ class _DecryptViewState extends State<DecryptView> {
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
           child: Column(
-            //crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
               TextFormField(
                 controller: passwordController,
@@ -76,6 +77,14 @@ class _DecryptViewState extends State<DecryptView> {
                     }
 
                     final reportTextList = encryptText.split(";");
+
+                    if (reportTextList.length != 3) {
+                      Toast.show("Wrong Decrypt Text", context,
+                          duration: Toast.LENGTH_LONG,
+                          gravity: Toast.CENTER,
+                          backgroundColor: Colors.red);
+                      return;
+                    }
                     final encryptedKey = reportTextList[0];
                     final sign = reportTextList[1];
                     final encryptedText = reportTextList[2];
@@ -112,8 +121,23 @@ class _DecryptViewState extends State<DecryptView> {
 
                       //得到文本
                       final reportText = aesDecrypt(encryptedText, secretKey);
-                      //解压文本并得到第4个文本节。
-                      plainText = zlibDecode(reportText).split(";")[3];
+
+                      //检查签名来自哪里
+                      List<CMKey> pubkeys = await DB.queryKeys(type: "public");
+
+                      for (var i = 0; i < pubkeys.length; i++) {
+                        final publickey =
+                            parsePublicKeyFromPem(pubkeys[i].value);
+                        if (rsaVerify(
+                            publickey, sha256String(reportText), sign)) {
+                          from = "From:${pubkeys[i].name}/${pubkeys[i].id}";
+
+                          break;
+                        }
+                      }
+
+                      //解压文本。
+                      plainText = zlibDecode(reportText);
                     } catch (e) {
                       Toast.show("Decrypt error!!", context,
                           duration: Toast.LENGTH_LONG,
@@ -140,7 +164,7 @@ class _DecryptViewState extends State<DecryptView> {
                       Toast.show("Copy to Clipboard Successed!!", context,
                           duration: Toast.LENGTH_LONG,
                           gravity: Toast.CENTER,
-                          backgroundColor: Colors.grey);
+                          backgroundColor: Colors.blueGrey);
                     });
                   } else {
                     Toast.show("Decrypt first", context,
@@ -151,7 +175,19 @@ class _DecryptViewState extends State<DecryptView> {
                   setState(() {});
                 },
               ),
-              Text("Plain Text:\n$plainText")
+              Text(
+                "🐒 Plain Text 🐒",
+                style: TextStyle(fontSize: 20, color: Colors.black),
+                textAlign: TextAlign.center,
+              ),
+              Text(
+                "$from",
+                style: TextStyle(fontSize: 12, color: Colors.green),
+              ),
+              Text(
+                "$plainText",
+                style: TextStyle(fontSize: 14, color: Colors.blueGrey),
+              )
             ],
           ),
         ));

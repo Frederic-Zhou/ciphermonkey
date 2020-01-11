@@ -72,7 +72,7 @@ class _ContactViewState extends State<ContactView> {
               Toast.show("Add Successed!!", context,
                   duration: Toast.LENGTH_LONG,
                   gravity: Toast.CENTER,
-                  backgroundColor: Colors.grey);
+                  backgroundColor: Colors.blueGrey);
             } catch (e) {
               Toast.show("Add Fail!!", context,
                   duration: Toast.LENGTH_LONG,
