@@ -42,8 +42,11 @@ class _EncryptViewState extends State<EncryptView> {
   void getKeyListData() {
     Future<List<CMKey>> pubkeysF = DB.queryKeys(type: "public");
     pubkeysF.then((pubkeys) {
+      if (!mounted) return;
+      if (pubkeys.length == 0) {
+        DefaultTabController.of(context).animateTo(3);
+      }
       pubkeys.forEach((pubkey) {
-        if (!mounted) return;
         setState(() {
           DropdownMenuItem dropdownMenuItem = new DropdownMenuItem(
             child: new Text("${pubkey.name}\n${pubkey.id.toUpperCase()}"),
@@ -188,6 +191,10 @@ class _EncryptViewState extends State<EncryptView> {
                       finalEncryptedReport = base64Encode(
                           "$encryptedKey;$sign;$encryptedText".codeUnits);
 
+                      Toast.show("Encrypt Success!", context,
+                          duration: Toast.LENGTH_LONG,
+                          gravity: Toast.CENTER,
+                          backgroundColor: Colors.blueGrey);
                       setState(() {});
                     }
                   },

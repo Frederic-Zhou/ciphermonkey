@@ -35,7 +35,7 @@ class DB {
       String name: "",
       String addtime: "",
       String type: ""}) async {
-    List<String> whereList = [];
+    List<String> whereList = ["1=1"];
     List<String> whereArgList = [];
     if (id != "") {
       whereList.add("id=?");
@@ -55,7 +55,7 @@ class DB {
     }
 
     final List<Map<String, dynamic>> maps = await instance.query('keys',
-        where: whereList.join(" OR "), whereArgs: whereArgList);
+        where: whereList.join(" AND "), whereArgs: whereArgList);
     return List.generate(maps.length, (i) {
       return CMKey(
         id: maps[i]['id'],

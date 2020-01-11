@@ -26,6 +26,9 @@ class _ContactViewState extends State<ContactView> {
 
     pubkeyFuture.then((keys) {
       pubkeys = keys;
+      if (keys.length == 0) {
+        DefaultTabController.of(context).animateTo(3);
+      }
       //print(keys.length);
       setState(() {});
     });
@@ -46,7 +49,64 @@ class _ContactViewState extends State<ContactView> {
               "${pubkeys[index].name}",
               style: Theme.of(context).textTheme.title,
             ),
-            subtitle: Text("ID:${pubkeys[index].id.toUpperCase()}"),
+            subtitle: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                Text("ID:${pubkeys[index].id.toUpperCase()}"),
+                Text(
+                    "MD5:${md5String(combinPublicKey(pubkeys[index].id, pubkeys[index].name, pubkeys[index].value)).toUpperCase()}"),
+              ],
+            ),
+            trailing: IconButton(
+              icon: Icon(
+                Icons.delete_outline,
+                color: Colors.grey,
+              ),
+              onPressed: () {
+                //DB.delKey(pubkeys[index].id);
+                return showDialog<void>(
+                  context: context,
+                  barrierDismissible: false, // user must tap button!
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: Text('Are Sure DELETE ??'),
+                      content: SingleChildScrollView(
+                        child: ListBody(
+                          children: <Widget>[
+                            Text('It will be DELETE FOREVER!!!'),
+                            Text(
+                                'if the key is yourself, the private key will be delete also.'),
+                          ],
+                        ),
+                      ),
+                      actions: <Widget>[
+                        FlatButton(
+                          child: Text(
+                            'SURE',
+                          ),
+                          onPressed: () {
+                            DB.delKey(pubkeys[index].id);
+                            DB.delKey(pubkeys[index].id + ".private");
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                        FlatButton(
+                          child: Text(
+                            'CANCEL',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                        )
+                      ],
+                    );
+                  },
+                );
+              },
+            ),
             onTap: () {},
           );
         },
@@ -55,11 +115,11 @@ class _ContactViewState extends State<ContactView> {
         onPressed: () {
           Future<ClipboardData> clipboard = Clipboard.getData("text/plain");
 
-          clipboard.then((clipboard) {
+          clipboard.then((clipboard) async {
             try {
               List<String> contact = discombinPublicKey(clipboard.text);
 
-              DB.addKey(CMKey(
+              await DB.addKey(CMKey(
                   id: contact[0],
                   name: contact[1],
                   value: contact[2],

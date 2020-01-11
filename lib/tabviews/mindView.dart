@@ -21,13 +21,14 @@ class _MindViewState extends State<MindView> {
   final nicknameController = TextEditingController();
   final passwordController = TextEditingController();
 
-  String pubkeyString = "-----";
+  String pubkeyString = "";
   String pubID = "";
   String pubNickname = "";
   bool hasKey = false;
   @override
   void initState() {
     super.initState();
+
     refresh();
   }
 
@@ -39,8 +40,6 @@ class _MindViewState extends State<MindView> {
       if (hasKey) {
         Future<List<CMKey>> pubkeyFuture = DB.queryKeys(
             id: prikeys[0].id.substring(0, prikeys[0].id.indexOf(".")),
-            name: "",
-            addtime: "",
             type: "public");
 
         pubkeyFuture.then((pubkeys) {
@@ -48,12 +47,10 @@ class _MindViewState extends State<MindView> {
             pubkeyString = pubkeys[0].value;
             pubID = pubkeys[0].id;
             pubNickname = pubkeys[0].name;
-            setState(() {});
           }
         });
-      } else {
-        setState(() {});
       }
+      setState(() {});
     });
   }
 
@@ -76,7 +73,7 @@ class _MindViewState extends State<MindView> {
                           hintText: 'Your nickname',
                         ),
                         validator: (value) {
-                          Pattern pattern = r'^[a-zA-Z0-9]{2,20}$';
+                          Pattern pattern = r'^[a-zA-Z0-9_]{2,20}$';
                           RegExp regex = new RegExp(pattern);
                           if (!regex.hasMatch(value.trim())) {
                             return 'Enter your nickname(a-z and 0-9)';
@@ -113,8 +110,9 @@ class _MindViewState extends State<MindView> {
                             String prikey =
                                 encodePrivateKeyToPem(pair.privateKey);
                             Uuid uuid = Uuid();
-                            String id =
-                                uuid.v5(Uuid.NAMESPACE_URL, "dawngrp.com");
+                            String id = uuid
+                                .v5(Uuid.NAMESPACE_URL, "dawngrp.com")
+                                .replaceAll("-", "");
 
                             String name = nicknameController.text.trim();
 
