@@ -52,9 +52,11 @@ class _ContactViewState extends State<ContactView> {
             subtitle: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
-                Text("ID:${pubkeys[index].id.toUpperCase()}"),
+                Text("ID:${pubkeys[index].id.toUpperCase()}",
+                    style: TextStyle(fontSize: 12)),
                 Text(
-                    "MD5:${md5String(combinPublicKey(pubkeys[index].id, pubkeys[index].name, pubkeys[index].value)).toUpperCase()}"),
+                    "FP:${md5String(combinPublicKey(pubkeys[index].id, pubkeys[index].name, pubkeys[index].value)).toUpperCase()}",
+                    style: TextStyle(fontSize: 12)),
               ],
             ),
             trailing: IconButton(
@@ -88,6 +90,7 @@ class _ContactViewState extends State<ContactView> {
                             DB.delKey(pubkeys[index].id);
                             DB.delKey(pubkeys[index].id + ".private");
                             Navigator.of(context).pop();
+                            refresh();
                           },
                         ),
                         FlatButton(

@@ -25,6 +25,7 @@ class _MindViewState extends State<MindView> {
   String pubID = "";
   String pubNickname = "";
   bool hasKey = false;
+  bool loading = true;
   @override
   void initState() {
     super.initState();
@@ -47,10 +48,10 @@ class _MindViewState extends State<MindView> {
             pubkeyString = pubkeys[0].value;
             pubID = pubkeys[0].id;
             pubNickname = pubkeys[0].name;
+            setState(() {});
           }
         });
       }
-      setState(() {});
     });
   }
 
@@ -102,6 +103,7 @@ class _MindViewState extends State<MindView> {
                         onPressed: () {
                           // Validate will return true if the form is valid, or false if
                           // the form is invalid.
+
                           if (_formKey.currentState.validate()) {
                             // 生成 pubkey和prikey.
                             var pair = generateRSAkeyPair();
@@ -109,10 +111,10 @@ class _MindViewState extends State<MindView> {
                                 encodePublicKeyToPem(pair.publicKey);
                             String prikey =
                                 encodePrivateKeyToPem(pair.privateKey);
-                            Uuid uuid = Uuid();
-                            String id = uuid
-                                .v5(Uuid.NAMESPACE_URL, "dawngrp.com")
-                                .replaceAll("-", "");
+
+                            String id = md5String(pubkey +
+                                prikey +
+                                DateTime.now().toIso8601String());
 
                             String name = nicknameController.text.trim();
 
@@ -155,11 +157,11 @@ class _MindViewState extends State<MindView> {
                       ),
                       Text("ID: ${pubID.toUpperCase()}",
                           style:
-                              TextStyle(fontSize: 16, color: Colors.blueGrey)),
+                              TextStyle(fontSize: 14, color: Colors.blueGrey)),
                       Text(
-                          "MD5: ${md5String(combinPublicKey(pubID, pubNickname, pubkeyString)).toUpperCase()}",
+                          "FP: ${md5String(combinPublicKey(pubID, pubNickname, pubkeyString)).toUpperCase()}",
                           style:
-                              TextStyle(fontSize: 16, color: Colors.blueGrey)),
+                              TextStyle(fontSize: 14, color: Colors.blueGrey)),
                       RaisedButton(
                         onPressed: () {
                           String pubTxt =

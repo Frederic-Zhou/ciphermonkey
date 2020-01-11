@@ -124,14 +124,14 @@ class _DecryptViewState extends State<DecryptView> {
 
                       //检查签名来自哪里
                       List<CMKey> pubkeys = await DB.queryKeys(type: "public");
-
+                      from = "From: Unknow";
                       for (var i = 0; i < pubkeys.length; i++) {
                         final publickey =
                             parsePublicKeyFromPem(pubkeys[i].value);
                         if (rsaVerify(
                             publickey, sha256String(reportText), sign)) {
                           from =
-                              "From:${pubkeys[i].name}/${pubkeys[i].id.toUpperCase()}";
+                              "From: ${pubkeys[i].name}(${pubkeys[i].id.toUpperCase()})";
 
                           break;
                         }
