@@ -21,7 +21,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: MyHomePage(title: '🙈 Cipher Monkey 🙊'),
+      home: MyHomePage(title: '🙈 Cipher Monkey V1 🙊'),
       debugShowCheckedModeBanner: false,
     );
   }
