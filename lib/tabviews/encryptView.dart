@@ -191,7 +191,10 @@ class _EncryptViewState extends State<EncryptView> {
                     }
                   },
                 ),
-                Divider(),
+                Divider(
+                  thickness: 2,
+                  color: Colors.green,
+                ),
                 RaisedButton(
                   child: Text('Copy Encrypted Text ⬇️ to Clipboard',
                       style: TextStyle(color: Colors.white)),
@@ -221,6 +224,10 @@ class _EncryptViewState extends State<EncryptView> {
                   "🙈 Encrypted Text 🙈",
                   style: TextStyle(fontSize: 20, color: Colors.black),
                   textAlign: TextAlign.center,
+                ),
+                Divider(
+                  thickness: 0,
+                  color: Colors.grey,
                 ),
                 Text(
                   "$finalEncryptedReport",

@@ -151,6 +151,10 @@ class _DecryptViewState extends State<DecryptView> {
                   }
                 },
               ),
+              Divider(
+                thickness: 2,
+                color: Colors.green,
+              ),
               RaisedButton(
                 child: Text('Copy Plain Text to Clipboard',
                     style: TextStyle(color: Colors.white)),
@@ -180,10 +184,18 @@ class _DecryptViewState extends State<DecryptView> {
                 style: TextStyle(fontSize: 20, color: Colors.black),
                 textAlign: TextAlign.center,
               ),
+              Divider(
+                  thickness: 0,
+                  color: Colors.grey,
+                ),
               Text(
                 "$from",
                 style: TextStyle(fontSize: 12, color: Colors.green),
               ),
+              Divider(
+                  thickness: 0,
+                  color: Colors.grey,
+                ),
               Text(
                 "$plainText",
                 style: TextStyle(fontSize: 14, color: Colors.blueGrey),

@@ -186,6 +186,10 @@ class _MindViewState extends State<MindView> {
                         style: TextStyle(fontSize: 20, color: Colors.black),
                         textAlign: TextAlign.center,
                       ),
+                      Divider(
+                        thickness: 0,
+                        color: Colors.grey,
+                      ),
                       Text(
                         "${combinPublicKey(pubID, pubNickname, pubkeyString)}",
                         style: TextStyle(fontSize: 14, color: Colors.blueGrey),
