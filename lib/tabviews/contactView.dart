@@ -46,9 +46,7 @@ class _ContactViewState extends State<ContactView> {
               "${pubkeys[index].name}",
               style: Theme.of(context).textTheme.title,
             ),
-            subtitle: Text(
-                "ID: ${pubkeys[index].id.toUpperCase()}\nMD5: ${md5String(pubkeys[index].value).toUpperCase()}"),
-            leading: Text("${(index + 1).toString()}"),
+            subtitle: Text("ID:${pubkeys[index].id.toUpperCase()}"),
             onTap: () {},
           );
         },
