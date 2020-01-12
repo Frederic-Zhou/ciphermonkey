@@ -6,8 +6,8 @@ import 'tabviews/encryptView.dart';
 import 'tabviews/mindView.dart';
 
 void main() async {
-  // WidgetsFlutterBinding.ensureInitialized();
-  // await DB.openDB();
+  WidgetsFlutterBinding.ensureInitialized();
+  await DB.openDB();
   runApp(MyApp());
 }
 

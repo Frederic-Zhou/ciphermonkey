@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:ciphermonkey/model.dart';
+import 'package:CipherMonkey/model.dart';
 import 'package:toast/toast.dart';
 import 'package:flutter/services.dart';
-import 'package:ciphermonkey/en-de-crypt.dart';
+import 'package:CipherMonkey/en-de-crypt.dart';
 
 class ContactView extends StatefulWidget {
   ContactView({Key key, this.title}) : super(key: key);

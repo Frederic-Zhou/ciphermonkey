@@ -1,9 +1,8 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:ciphermonkey/model.dart';
-import 'package:ciphermonkey/en-de-crypt.dart';
-import 'package:uuid/uuid.dart';
+import 'package:CipherMonkey/model.dart';
+import 'package:CipherMonkey/en-de-crypt.dart';
 import 'package:flutter/services.dart';
 import 'package:toast/toast.dart';
 

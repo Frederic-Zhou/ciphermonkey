@@ -2,11 +2,11 @@
 //在加密时，需要将发送人的信息发送过来。这样才能根据发送人验证签名
 import 'dart:convert';
 
-import 'package:ciphermonkey/en-de-crypt.dart';
+import 'package:CipherMonkey/en-de-crypt.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:toast/toast.dart';
-import 'package:ciphermonkey/model.dart';
+import 'package:CipherMonkey/model.dart';
 
 class DecryptView extends StatefulWidget {
   DecryptView({Key key, this.title}) : super(key: key);
