@@ -103,40 +103,14 @@ class _MindViewState extends State<MindView> {
                           // Validate will return true if the form is valid, or false if
                           // the form is invalid.
 
-                          if (_formKey.currentState.validate()) {
+                          if (_formKey.currentState.validate() && !hasKey) {
                             // 生成 pubkey和prikey.
-                            var pair = generateRSAkeyPair();
-                            String pubkey =
-                                encodePublicKeyToPem(pair.publicKey);
-                            String prikey =
-                                encodePrivateKeyToPem(pair.privateKey);
 
-                            String id = md5String(pubkey +
-                                prikey +
-                                DateTime.now().toIso8601String());
-
-                            String name = nicknameController.text.trim();
-
-                            CMKey pubCMkey = CMKey(
-                                id: id,
-                                name: name,
-                                addtime: DateTime.now().toIso8601String(),
-                                type: "public",
-                                value: pubkey);
-                            CMKey priCMkey = CMKey(
-                                id: "$id.private",
-                                name: name,
-                                addtime: DateTime.now().toIso8601String(),
-                                type: "private",
-                                value: aesEncrypt(
-                                    prikey,
-                                    base64Encode(
-                                        md5String(passwordController.text)
-                                            .codeUnits)));
-
-                            DB.addKey(pubCMkey);
-                            DB.addKey(priCMkey);
-                            refresh();
+                            Future(() {
+                              hasKey = true;
+                            }).then((_) {
+                              createKey();
+                            });
                           }
                         },
                         child: Text('Create Public Key & Private Key',
@@ -200,5 +174,33 @@ class _MindViewState extends State<MindView> {
             ],
           ),
         ));
+  }
+
+  void createKey() {
+    var pair = generateRSAkeyPair();
+    String pubkey = encodePublicKeyToPem(pair.publicKey);
+    String prikey = encodePrivateKeyToPem(pair.privateKey);
+
+    String id = md5String(pubkey + prikey + DateTime.now().toIso8601String());
+
+    String name = nicknameController.text.trim();
+
+    CMKey pubCMkey = CMKey(
+        id: id,
+        name: name,
+        addtime: DateTime.now().toIso8601String(),
+        type: "public",
+        value: pubkey);
+    CMKey priCMkey = CMKey(
+        id: "$id.private",
+        name: name,
+        addtime: DateTime.now().toIso8601String(),
+        type: "private",
+        value: aesEncrypt(prikey,
+            base64Encode(md5String(passwordController.text).codeUnits)));
+
+    DB.addKey(pubCMkey);
+    DB.addKey(priCMkey);
+    refresh();
   }
 }
