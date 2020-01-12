@@ -6,8 +6,8 @@ import 'tabviews/encryptView.dart';
 import 'tabviews/mindView.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await DB.openDB();
+  // WidgetsFlutterBinding.ensureInitialized();
+  // await DB.openDB();
   runApp(MyApp());
 }
 
@@ -37,40 +37,47 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  List<Widget> tabViews = [];
+  List<Widget> tabBars = [];
+
   @override
   void initState() {
     super.initState();
-
-    setState(() {});
+    DB.openDB().then((onValue) {
+      setState(() {
+        tabViews = [ContactView(), EncryptView(), DecryptView(), MindView()];
+        tabBars = [
+          Tab(
+            text: "🕵🏻‍♂️ Contact",
+          ),
+          Tab(
+            text: "📝 Encrypt",
+          ),
+          Tab(
+            text: "🔐 Decrypt",
+          ),
+          Tab(
+            text: "🔑 Mind",
+          )
+        ];
+      });
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 4,
+      length: tabViews.length,
       child: Scaffold(
           appBar: AppBar(
             title: Text(widget.title),
             bottom: TabBar(
               isScrollable: true,
-              tabs: [
-                Tab(
-                  text: "🕵🏻‍♂️ Contact",
-                ),
-                Tab(
-                  text: "📝 Encrypt",
-                ),
-                Tab(
-                  text: "🔐 Decrypt",
-                ),
-                Tab(
-                  text: "🔑 Mind",
-                )
-              ],
+              tabs: tabBars,
             ),
           ),
           body: TabBarView(
-            children: [ContactView(), EncryptView(), DecryptView(), MindView()],
+            children: tabViews,
           )),
     );
   }
