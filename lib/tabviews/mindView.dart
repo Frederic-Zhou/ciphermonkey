@@ -70,8 +70,11 @@ class _MindViewState extends State<MindView> {
                       TextFormField(
                         controller: nicknameController,
                         decoration: const InputDecoration(
-                          hintText: 'Your nickname',
-                        ),
+                            hintText: 'Your nickname',
+                            contentPadding: EdgeInsets.all(10.0),
+                            fillColor: Colors.amberAccent,
+                            filled: true,
+                            border: OutlineInputBorder()),
                         validator: (value) {
                           Pattern pattern = r'^[a-zA-Z0-9_]{2,20}$';
                           RegExp regex = new RegExp(pattern);
@@ -81,11 +84,17 @@ class _MindViewState extends State<MindView> {
                           return null;
                         },
                       ),
+                      SizedBox(
+                        height: 10,
+                      ),
                       TextFormField(
                         controller: passwordController,
                         decoration: const InputDecoration(
-                          hintText: 'Your password',
-                        ),
+                            hintText: 'Your password',
+                            contentPadding: EdgeInsets.all(10.0),
+                            fillColor: Colors.amberAccent,
+                            filled: true,
+                            border: OutlineInputBorder()),
                         keyboardType: TextInputType.visiblePassword,
                         obscureText: true,
                         validator: (value) {

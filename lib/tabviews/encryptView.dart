@@ -50,7 +50,7 @@ class _EncryptViewState extends State<EncryptView> {
         setState(() {
           DropdownMenuItem dropdownMenuItem = new DropdownMenuItem(
             child: new Text(
-                "${pubkey.remark == null ? pubkey.name : pubkey.remark + "(" + pubkey.name + ")"}\n${pubkey.id.toUpperCase()}"),
+                "${pubkey.remark == null ? pubkey.name : pubkey.remark + "(" + pubkey.name + ")"}"),
             value: pubkey,
           );
           keyList.add(dropdownMenuItem);
@@ -72,30 +72,48 @@ class _EncryptViewState extends State<EncryptView> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               //crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                new DropdownButton(
-                    value: dropdownValue,
-                    icon: Icon(
-                      Icons.person_add,
-                      color: Colors.blue,
+                Row(
+                  children: <Widget>[
+                    Container(
+                      child: Icon(
+                        Icons.person,
+                        color: Colors.blue,
+                        size: 20.0,
+                      ),
                     ),
-                    iconSize: 24,
-                    elevation: 24,
-                    style: TextStyle(color: Colors.blue),
-                    underline: Container(
-                      height: 2,
-                      color: Colors.blue,
-                    ),
-                    onChanged: (newValue) {
-                      setState(() {
-                        dropdownValue = newValue;
-                      });
-                    },
-                    items: keyList),
+                    new DropdownButton(
+                        value: dropdownValue,
+                        icon: Icon(
+                          Icons.arrow_drop_down,
+                          color: Colors.blue,
+                        ),
+                        iconSize: 24,
+                        elevation: 24,
+                        style: TextStyle(color: Colors.blue),
+                        hint: Text("Select Contact"),
+                        underline: Container(
+                          height: 1,
+                          color: Colors.blue,
+                        ),
+                        onChanged: (newValue) {
+                          setState(() {
+                            dropdownValue = newValue;
+                          });
+                        },
+                        items: keyList),
+                  ],
+                ),
+                SizedBox(
+                  height: 10,
+                ),
                 TextFormField(
                   controller: plainTextController,
-                  decoration: const InputDecoration(
-                    hintText: 'Text to encrypt',
-                  ),
+                  decoration: InputDecoration(
+                      hintText: 'Text to encrypt',
+                      contentPadding: EdgeInsets.all(10.0),
+                      fillColor: Colors.amberAccent,
+                      filled: true,
+                      border: OutlineInputBorder()),
                   validator: (value) {
                     if (value.length == 0) {
                       return 'Enter some text';
@@ -112,9 +130,16 @@ class _EncryptViewState extends State<EncryptView> {
                     });
                   },
                 ),
+                SizedBox(
+                  height: 10,
+                ),
                 TextFormField(
                   controller: passwordController,
-                  decoration: const InputDecoration(
+                  decoration: InputDecoration(
+                    contentPadding: EdgeInsets.all(10.0),
+                    fillColor: Colors.amberAccent,
+                    filled: true,
+                    border: OutlineInputBorder(),
                     hintText: 'Password',
                   ),
                   validator: (value) {
@@ -127,6 +152,9 @@ class _EncryptViewState extends State<EncryptView> {
                   },
                   keyboardType: TextInputType.visiblePassword,
                   obscureText: true,
+                ),
+                SizedBox(
+                  height: 10,
                 ),
                 RaisedButton(
                   child: Text('Encrypt', style: TextStyle(color: Colors.white)),
@@ -191,6 +219,9 @@ class _EncryptViewState extends State<EncryptView> {
                       //7 组合报文，编码成base64
                       finalEncryptedReport = base64Encode(
                           "$encryptedKey;$sign;$encryptedText".codeUnits);
+
+                      finalEncryptedReport =
+                          "[to:${dropdownValue.name}]\n$finalEncryptedReport\n[to:${dropdownValue.name}]";
 
                       if (finalEncryptedReport.length > 0) {
                         Future<void> clipboard = Clipboard.setData(

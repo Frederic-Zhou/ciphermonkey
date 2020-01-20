@@ -41,7 +41,11 @@ class _DecryptViewState extends State<DecryptView> {
                 children: <Widget>[
                   TextFormField(
                     controller: passwordController,
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
+                      contentPadding: EdgeInsets.all(10.0),
+                      fillColor: Colors.amberAccent,
+                      filled: true,
+                      border: OutlineInputBorder(),
                       hintText: 'Password',
                     ),
                     validator: (value) {
@@ -67,8 +71,10 @@ class _DecryptViewState extends State<DecryptView> {
                         String encryptText;
                         try {
                           //1 base64解码
-                          encryptText = String.fromCharCodes(
-                              base64Decode(clipboard.text));
+                          encryptText = String.fromCharCodes(base64Decode(
+                              clipboard.text
+                                  .replaceAll(new RegExp(r'\[.+\]'), "")
+                                  .trim()));
                         } catch (e) {
                           Toast.show(
                               "Clipboard Text Can't be Decrypt!!", context,
@@ -172,9 +178,19 @@ class _DecryptViewState extends State<DecryptView> {
                     "$from",
                     style: TextStyle(fontSize: 12, color: Colors.green),
                   ),
-                  Text(
-                    "$plainText",
-                    style: TextStyle(fontSize: 16, color: Colors.black),
+                  Container(
+                    margin: EdgeInsets.only(top: 5, bottom: 5),
+                    padding: EdgeInsets.all(5),
+                    decoration: new BoxDecoration(
+                      border: new Border.all(
+                          color: Colors.blue, width: 1), // 边色与边宽度
+                      color: Colors.lightGreen, // 底色
+                      // 也可控件一边圆角大��
+                    ),
+                    child: Text(
+                      "$plainText",
+                      style: TextStyle(fontSize: 16, color: Colors.black),
+                    ),
                   ),
                   RaisedButton(
                     child: Text('Copy Plain Text to Clipboard',
