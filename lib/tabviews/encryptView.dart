@@ -49,7 +49,8 @@ class _EncryptViewState extends State<EncryptView> {
       pubkeys.forEach((pubkey) {
         setState(() {
           DropdownMenuItem dropdownMenuItem = new DropdownMenuItem(
-            child: new Text("${pubkey.name}\n${pubkey.id.toUpperCase()}"),
+            child: new Text(
+                "${pubkey.remark == null ? pubkey.name : pubkey.remark + "(" + pubkey.name + ")"}\n${pubkey.id.toUpperCase()}"),
             value: pubkey,
           );
           keyList.add(dropdownMenuItem);

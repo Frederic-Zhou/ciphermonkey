@@ -137,7 +137,7 @@ class _DecryptViewState extends State<DecryptView> {
                             if (rsaVerify(
                                 publickey, sha256String(reportText), sign)) {
                               from =
-                                  "From: ${pubkeys[i].name}(${pubkeys[i].id.toUpperCase()})";
+                                  "From: ${pubkeys[i].remark == null ? pubkeys[i].name : pubkeys[i].remark + "(" + pubkeys[i].name + ")"}";
 
                               break;
                             }
