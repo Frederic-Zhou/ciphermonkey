@@ -56,7 +56,9 @@ class DB {
     }
 
     final List<Map<String, dynamic>> maps = await instance.query('keys',
-        where: whereList.join(" AND "), whereArgs: whereArgList);
+        where: whereList.join(" AND "),
+        whereArgs: whereArgList,
+        orderBy: "remark,name Desc");
     return List.generate(maps.length, (i) {
       return CMKey(
         id: maps[i]['id'],
