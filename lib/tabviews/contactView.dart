@@ -112,6 +112,7 @@ class _ContactViewState extends State<ContactView> {
               },
             ),
             onTap: () {
+              remarkTextController.text = pubkeys[index].remark;
               return showDialog<void>(
                 context: context,
                 barrierDismissible: false, // user must tap button!
