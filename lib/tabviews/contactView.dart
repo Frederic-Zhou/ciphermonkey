@@ -15,6 +15,7 @@ class ContactView extends StatefulWidget {
 
 class _ContactViewState extends State<ContactView> {
   List<CMKey> pubkeys = [];
+  final remarkTextController = TextEditingController();
   @override
   void initState() {
     super.initState();
@@ -46,7 +47,7 @@ class _ContactViewState extends State<ContactView> {
         itemBuilder: (context, index) {
           return ListTile(
             title: Text(
-              "${pubkeys[index].name}",
+              "${pubkeys[index].remark == null ? pubkeys[index].name : pubkeys[index].remark + "(" + pubkeys[index].name + ")"}",
               style: Theme.of(context).textTheme.title,
             ),
             subtitle: Column(
@@ -110,7 +111,58 @@ class _ContactViewState extends State<ContactView> {
                 );
               },
             ),
-            onTap: () {},
+            onTap: () {
+              return showDialog<void>(
+                context: context,
+                barrierDismissible: false, // user must tap button!
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: Text('Remark for this key'),
+                    content: SingleChildScrollView(
+                      child: ListBody(
+                        children: <Widget>[
+                          TextFormField(
+                            controller: remarkTextController,
+                            decoration: const InputDecoration(
+                              hintText: 'Remark',
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                    actions: <Widget>[
+                      FlatButton(
+                        child: Text(
+                          'SURE',
+                        ),
+                        onPressed: () {
+                          CMKey newCMKey = CMKey(
+                              id: pubkeys[index].id,
+                              name: pubkeys[index].name,
+                              remark: remarkTextController.text == ''
+                                  ? pubkeys[index].remark
+                                  : remarkTextController.text,
+                              value: pubkeys[index].value,
+                              addtime: pubkeys[index].addtime,
+                              type: pubkeys[index].type);
+                          DB.modKey(newCMKey);
+                          Navigator.of(context).pop();
+                          refresh();
+                        },
+                      ),
+                      FlatButton(
+                        child: Text(
+                          'CANCEL',
+                        ),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                      )
+                    ],
+                  );
+                },
+              );
+            },
           );
         },
       )),

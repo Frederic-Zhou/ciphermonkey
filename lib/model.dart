@@ -10,7 +10,7 @@ class DB {
         join(await getDatabasesPath(), 'ciphermonkey.db'),
         version: 1, onCreate: (Database db, int version) async {
       await db.execute(
-        "CREATE TABLE keys(id TEXT PRIMARY KEY, name TEXT, value TEXT, addtime TEXT, type TEXT)",
+        "CREATE TABLE keys(id TEXT PRIMARY KEY, name TEXT,remark TEXT, value TEXT, addtime TEXT, type TEXT)",
       );
     });
   }
@@ -22,6 +22,7 @@ class DB {
       return CMKey(
         id: maps[i]['id'],
         name: maps[i]['name'],
+        remark: maps[i]['remark'],
         value: maps[i]['value'],
         addtime: maps[i]['addtime'],
         type: maps[i]['type'],
@@ -60,6 +61,7 @@ class DB {
       return CMKey(
         id: maps[i]['id'],
         name: maps[i]['name'],
+        remark: maps[i]['remark'],
         value: maps[i]['value'],
         addtime: maps[i]['addtime'],
         type: maps[i]['type'],
@@ -104,16 +106,18 @@ class DB {
 class CMKey {
   final String id;
   final String name;
+  final String remark;
   final String value;
   final String addtime;
   final String type;
 
-  CMKey({this.id, this.name, this.value, this.addtime, this.type});
+  CMKey({this.id, this.name, this.remark, this.value, this.addtime, this.type});
 
   Map<String, dynamic> toMap() {
     return {
       'id': id,
       'name': name,
+      'remark': remark,
       'value': value,
       'addtime': addtime,
       'type': type
@@ -122,6 +126,6 @@ class CMKey {
 
   @override
   String toString() {
-    return 'key{id: $id, name: $name, value: $value, addtime:$addtime, type:$type}';
+    return 'key{id: $id, name: $name, remark: $remark, value: $value, addtime:$addtime, type:$type}';
   }
 }

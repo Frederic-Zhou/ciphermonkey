@@ -16,14 +16,20 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Cipher Monkey',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: MyHomePage(title: '🙈 Cipher Monkey V1 🙊'),
-      debugShowCheckedModeBanner: false,
-    );
+    return GestureDetector(
+        behavior: HitTestBehavior.translucent,
+        onTap: () {
+          // 触摸收起键盘
+          FocusScope.of(context).requestFocus(FocusNode());
+        },
+        child: MaterialApp(
+          title: 'Cipher Monkey',
+          theme: ThemeData(
+            primarySwatch: Colors.blue,
+          ),
+          home: MyHomePage(title: '🙈 Cipher Monkey V2 🙊'),
+          debugShowCheckedModeBanner: false,
+        ));
   }
 }
 

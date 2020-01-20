@@ -135,6 +135,21 @@ class _MindViewState extends State<MindView> {
                           "FP: ${md5String(combinPublicKey(pubID, pubNickname, pubkeyString)).toUpperCase()}",
                           style:
                               TextStyle(fontSize: 14, color: Colors.blueGrey)),
+                      Text(
+                        "🔑 PUBLIC KEY 🔑",
+                        style: TextStyle(fontSize: 20, color: Colors.black),
+                        textAlign: TextAlign.center,
+                      ),
+                      Divider(
+                        thickness: 0,
+                        color: Colors.grey,
+                      ),
+                      Text(
+                        "${combinPublicKey(pubID, pubNickname, pubkeyString)}",
+                        style: TextStyle(fontSize: 14, color: Colors.blueGrey),
+                        maxLines: 5,
+                        overflow: TextOverflow.fade,
+                      ),
                       RaisedButton(
                         onPressed: () {
                           String pubTxt =
@@ -153,21 +168,6 @@ class _MindViewState extends State<MindView> {
                         child: Text('Copy public key to Clipboard',
                             style: TextStyle(color: Colors.white)),
                         color: Colors.green,
-                      ),
-                      Text(
-                        "🔑 PUBLIC KEY 🔑",
-                        style: TextStyle(fontSize: 20, color: Colors.black),
-                        textAlign: TextAlign.center,
-                      ),
-                      Divider(
-                        thickness: 0,
-                        color: Colors.grey,
-                      ),
-                      Text(
-                        "${combinPublicKey(pubID, pubNickname, pubkeyString)}",
-                        style: TextStyle(fontSize: 14, color: Colors.blueGrey),
-                        maxLines: 5,
-                        overflow: TextOverflow.fade,
                       ),
                     ],
                   )),
@@ -188,6 +188,7 @@ class _MindViewState extends State<MindView> {
     CMKey pubCMkey = CMKey(
         id: id,
         name: name,
+        remark: 'Yourself',
         addtime: DateTime.now().toIso8601String(),
         type: "public",
         value: pubkey);

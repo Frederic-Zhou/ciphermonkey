@@ -191,10 +191,27 @@ class _EncryptViewState extends State<EncryptView> {
                       finalEncryptedReport = base64Encode(
                           "$encryptedKey;$sign;$encryptedText".codeUnits);
 
-                      Toast.show("Encrypt Success!", context,
-                          duration: Toast.LENGTH_LONG,
-                          gravity: Toast.CENTER,
-                          backgroundColor: Colors.blueGrey);
+                      if (finalEncryptedReport.length > 0) {
+                        Future<void> clipboard = Clipboard.setData(
+                            ClipboardData(text: finalEncryptedReport));
+
+                        clipboard.then((noValue) {
+                          Toast.show(
+                              "Encrypt And Copy to Clipboard Successed!!",
+                              context,
+                              duration: Toast.LENGTH_LONG,
+                              gravity: Toast.CENTER,
+                              backgroundColor: Colors.blueGrey);
+                        });
+                      } else {
+                        Toast.show("Encrypt first", context,
+                            duration: Toast.LENGTH_LONG,
+                            gravity: Toast.CENTER,
+                            backgroundColor: Colors.red);
+                      }
+
+                      setState(() {});
+
                       setState(() {});
                     }
                   },
@@ -203,40 +220,18 @@ class _EncryptViewState extends State<EncryptView> {
                   thickness: 2,
                   color: Colors.green,
                 ),
-                RaisedButton(
-                  child: Text('Copy Encrypted Text ⬇️ to Clipboard',
-                      style: TextStyle(color: Colors.white)),
-                  color: Colors.green,
-                  onPressed: () {
-                    if (finalEncryptedReport.length > 0) {
-                      Future<void> clipboard = Clipboard.setData(
-                          ClipboardData(text: finalEncryptedReport));
-
-                      clipboard.then((noValue) {
-                        Toast.show("Copy to Clipboard Successed!!", context,
-                            duration: Toast.LENGTH_LONG,
-                            gravity: Toast.CENTER,
-                            backgroundColor: Colors.blueGrey);
-                      });
-                    } else {
-                      Toast.show("Encrypt first", context,
-                          duration: Toast.LENGTH_LONG,
-                          gravity: Toast.CENTER,
-                          backgroundColor: Colors.red);
-                    }
-
-                    setState(() {});
-                  },
-                ),
+                // RaisedButton(
+                //   child: Text('Copy Encrypted Text ⬇️ to Clipboard',
+                //       style: TextStyle(color: Colors.white)),
+                //   color: Colors.green,
+                //   onPressed: () {},
+                // ),
                 Text(
                   "🙈 Encrypted Text 🙈",
                   style: TextStyle(fontSize: 20, color: Colors.black),
                   textAlign: TextAlign.center,
                 ),
-                Divider(
-                  thickness: 0,
-                  color: Colors.grey,
-                ),
+
                 Text(
                   "$finalEncryptedReport",
                   style: TextStyle(fontSize: 14, color: Colors.blueGrey),
